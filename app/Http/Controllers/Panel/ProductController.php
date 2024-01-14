@@ -10,6 +10,7 @@ use App\Repository\products\productRepo;
 
 class ProductController extends Controller
 {
+
     public function __construct(public productRepo $productRepo){}
 
     public function index()
