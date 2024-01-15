@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\ProductController;
@@ -17,11 +18,14 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
     Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])->name('logout');
-
+    Route::middleware('auth:sanctum')
+        ->post('confirmation-password' , [RegisteredUserController::class , 'updatedPassword'])
+        ->name('confirmation-password');
 });
 
 
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
+
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
 
