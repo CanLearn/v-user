@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Panel\Product;
 use App\Repository\products\productRepo;
+use App\Services\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -26,26 +27,10 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-        foreach ($request->file('multi_image') as $image) {
-            $imageName = Str::random(15) . ' . ' . $image->getClientOriginalName();
-            $image->move(public_path('images/products/fa/') , $imageName);
-            $fileNames[] = $imageName;
-        }
-        foreach ($request->file('multi_image_en') as $imageEn) {
-            $imageName = Str::random(15) . ' . ' . $imageEn->getClientOriginalName();
-            $imageEn->move(public_path('images/products/en/') , $imageName);
-            $fileNames_en[] = $imageName;
-        }
-        $video_url = $request->video_url ? $request->video_url : null ;
-        $video_url = $request->video_url_en ? $request->video_url_en : null ;
-        if($video_url){
-
-        }
-        $multi_image = $fileNames;
-        $multi_image_en = $fileNames_en;
-
-        $video_url = 'asaSA';
-        $video_url_en = 'asaSA';
+        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null ;
+        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null ;
+        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null ;
+        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null ;
         $this->productRepo->create($request, $multi_image, $multi_image_en, $video_url, $video_url_en);
         return response()->json(['ok'], 200);
     }
@@ -57,7 +42,11 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, $product)
     {
-        $this->productRepo->update($request, $product);
+        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null ;
+        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null ;
+        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null ;
+        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null ;
+        $this->productRepo->update($request, $product , $multi_image, $multi_image_en, $video_url, $video_url_en);
         return response()->json(['ok'], 200);
     }
 
