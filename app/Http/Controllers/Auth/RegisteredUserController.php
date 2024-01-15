@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ConfirmationPasswordRequest;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Repository\users\userRepo;
@@ -36,21 +37,18 @@ class RegisteredUserController extends Controller
         return response()->json(['token' => $token, 'user' => $user]);
     }
 
-    public function updatedPassword(Request $request , userRepo $repo): \Illuminate\Http\JsonResponse
+    public function updatedPassword(ConfirmationPasswordRequest $request , userRepo $repo): \Illuminate\Http\JsonResponse
     {
-        $validated = $request->validateWithBag('updatePassword', [
-            'old_password' => ['required', Password::defaults()],
-            'password' => ['required', Password::defaults(), 'confirmed'],
-        ]);
+        $validated = $request->validated();
 
         $users = $repo->getFindId(auth()->user()->id);
         if ($users && Hash::check($request->old_password , $users->password)) {
             $request->user()->update([
                 'password' => Hash::make($validated['password']),
             ]);
-            return response()->json(['success' => 'رمز شما به درستی تعقیر کرد '] , 200);
+            return response()->json(['status' => 'success','message' => 'رمز شما به درستی تعقیر کرد '] , 200);
         }else {
-            return response()->json(['message' => 'Password does not match'], 401);
+            return response()->json(['status' => 'error' , 'message' => 'پسورد وارد شده صحیح نمیباشد '], 401);
         }
 
     }
