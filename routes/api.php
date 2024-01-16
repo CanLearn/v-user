@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\ProfileController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
 //    Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('supports', SupportController::class);
+
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
 });

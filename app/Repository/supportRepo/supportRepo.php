@@ -15,7 +15,7 @@ class  supportRepo
 
     public function index()
     {
-        return $this->query->orderByDesc('created-at')->paginate();
+        return $this->query->orderByDesc('created_at')->paginate();
     }
 
     public function create($value)
@@ -36,9 +36,9 @@ class  supportRepo
     {
         $id = $this->getById($id);
         return $this->query->where('id' , $id->id)->update([
-            'title'=> $value->title,
-            'link'=> $value->link,
-            'content'=> $value->content,
+            'title'=> $value->title ? $value->title : $id->title,
+            'link'=> $value->link ? $value->link : $id->link,
+            'content'=> $value->content ? $value->content : $id->content,
             'user_id'=> auth()->id(),
         ]);
     }
