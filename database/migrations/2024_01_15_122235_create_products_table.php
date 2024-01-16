@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -27,8 +26,13 @@ return new class extends Migration
             $table->longText('video_url_en')->nullable();
             $table->unsignedBigInteger('price')->nullable();
             $table->unsignedBigInteger('price_en')->nullable();
-            $table->enum('status_price' , \App\Models\Panel\Product::$status_price);
+            $table->enum('status_price', \App\Models\Panel\Product::$status_price);
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate();
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained('categories')
+                ->onUpdate('set null')
+                ->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

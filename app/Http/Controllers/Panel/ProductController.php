@@ -6,17 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Panel\Product;
+use App\Repository\category\categoryRepo;
 use App\Repository\products\productRepo;
+use App\Repository\supportRepo\supportRepo;
 use App\Services\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+
+
+
+
 
 class ProductController extends Controller
 {
 
-    public function __construct(public productRepo $productRepo)
-    {
-    }
+    public function __construct(public productRepo $productRepo){}
 
     public function index()
     {
@@ -24,14 +29,17 @@ class ProductController extends Controller
         return response()->json(['date', $products], 200);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
+        $category = $categoryRepo->getById($request->category_id);
+        $support = $supportRepo->getMultiId($request->support_id);
+        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
+        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
+        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
+        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
+        $products = $this->productRepo->create($request, $multi_image, $multi_image_en, $video_url, $video_url_en, $category);
 
-        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null ;
-        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null ;
-        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null ;
-        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null ;
-        $this->productRepo->create($request, $multi_image, $multi_image_en, $video_url, $video_url_en);
+        $products->supports()->sync($support);
         return response()->json(['ok'], 200);
     }
 
@@ -40,18 +48,109 @@ class ProductController extends Controller
         return $this->productRepo->getFindId($product);
     }
 
-    public function update(UpdateProductRequest $request, $product)
+
+    public function update(UpdateProductRequest $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
-        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null ;
-        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null ;
-        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null ;
-        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null ;
-        $this->productRepo->update($request, $product , $multi_image, $multi_image_en, $video_url, $video_url_en);
+
+        $category = $categoryRepo->getById($request->category_id);
+        $support = $supportRepo->getMultiId($request->support_id);
+        $product = $this->productRepo->getFindId($product);
+
+        if ($request->hasFile('multi_image')) {
+            if (!empty($product->multi_image)) {
+                foreach ($product->multi_image as $oldImage) {
+                    $oldImagePath = public_path('images/products/fa/' . $oldImage);
+                    if (\Illuminate\Support\Facades\File::exists($oldImagePath)) {
+                        \Illuminate\Support\Facades\File::delete($oldImagePath);
+                    }
+                }
+            }
+            $multi_image = File::image($request->file('multi_image'));
+        }
+        $multi_image = $multi_image ?? $product->multi_image ;
+
+
+        if ($request->hasFile('multi_image_en')) {
+            if (!empty($product->multi_image_en)) {
+                foreach ($product->multi_image_en as $oldImage) {
+                    $oldImagePath = public_path('images/products/en/' . $oldImage);
+                    if (\Illuminate\Support\Facades\File::exists($oldImagePath)) {
+                        \Illuminate\Support\Facades\File::delete($oldImagePath);
+                    }
+                }
+            }
+            $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
+        }
+        $multi_image_en = $multi_image_en ?? $product->multi_image_en ;
+
+
+
+        if ($request->hasFile('video_url')) {
+
+            if (!empty($product->video_url)) {
+                foreach ($product->video_url as $oldImage) {
+                    if (Storage::delete('files/products/fa/' . $oldImage)) {
+                        Storage::delete('files/products/fa/' . $oldImage);
+                    }
+                }
+            }
+            $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
+        }
+        $video_url = $video_url ?? $product->video_url ;
+
+
+        if ($request->hasFile('video_url_en')) {
+            if (!empty($product->video_url_en)) {
+                foreach ($product->video_url_en as $oldImage) {
+                    if (Storage::delete('files/products/en/' . $oldImage)) {
+                        Storage::delete('files/products/en/' . $oldImage);
+                    }
+                }
+            }
+            $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
+        }
+        $video_url_en = $video_url_en ?? $product->video_url_en ;
+
+
+        $this->productRepo->update($request, $product, $multi_image, $multi_image_en, $video_url, $video_url_en , $category);
+        $product->supports()->sync($support);
         return response()->json(['ok'], 200);
     }
 
     public function destroy($product)
     {
+        $product = $this->productRepo->getFindId($product);
+        if (!empty($product->multi_image)) {
+            foreach ($product->multi_image as $oldImage) {
+                $oldImagePath = public_path('images/products/fa/' . $oldImage);
+                if (\Illuminate\Support\Facades\File::exists($oldImagePath)) {
+                    \Illuminate\Support\Facades\File::delete($oldImagePath);
+                }
+            }
+        }
+        if (!empty($product->multi_image_en)) {
+            foreach ($product->multi_image_en as $oldImage) {
+                $oldImagePath = public_path('images/products/en/' . $oldImage);
+                if (\Illuminate\Support\Facades\File::exists($oldImagePath)) {
+                    \Illuminate\Support\Facades\File::delete($oldImagePath);
+                }
+            }
+        }
+        if (!empty($product->video_url)) {
+            foreach ($product->video_url as $oldImage) {
+                if (Storage::delete('files/products/fa/' . $oldImage)) {
+                    Storage::delete('files/products/fa/' . $oldImage);
+                }
+            }
+        }
+        if (!empty($product->video_url_en)) {
+            foreach ($product->video_url_en as $oldImage) {
+                $path = 'files/products/en/' . $oldImage;
+                if (Storage::delete($path)) {
+                    Storage::delete($path);
+                }
+            }
+        }
         $this->productRepo->delete($product);
         return response()->json(['ok'], 200);
     }

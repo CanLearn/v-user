@@ -3,6 +3,7 @@
 namespace App\Repository\supportRepo;
 
 
+use App\Models\Panel\Category;
 use App\Models\Panel\Support;
 
 class  supportRepo
@@ -47,6 +48,12 @@ class  supportRepo
     {
         $id = $this->getById($id);
         return $this->query->where('id' , $id->id)->delete();
+    }
+
+    public function getMultiId( $support_id)
+    {
+        $support_ids = explode(',', $support_id);
+       return  Support::query()->whereIn('id', $support_ids)->get()->pluck('id')->toArray();
     }
 
 

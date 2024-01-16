@@ -5,10 +5,13 @@ namespace App\Models\Panel;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory , Sluggable;
+    use HasFactory , Sluggable , SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -26,7 +29,8 @@ class Product extends Model
         'price',
         'price_en',
         'status_price',
-        'user_id'
+        'user_id' ,
+        'category_id'
     ];
     public function sluggable(): array
     {
@@ -50,4 +54,12 @@ class Product extends Model
         self::STATUS_PRICE_ANSIBLE
     ];
 
+    public function categories():BelongsTo
+    {
+        return $this->belongsTo(Category::class );
+    }
+    public function supports():BelongsToMany
+    {
+        return $this->belongsToMany(Support::class , 'support_products');
+    }
 }
