@@ -25,7 +25,7 @@ class productRepo
             'title'  => $value->title,
             'title_en'  => $value->title_en,
             'slug' => SlugService::createSlug(Product::class, 'slug', $value->title),
-            'slug_en'  => \str()->slug($value->slug_en),
+            'slug_en'  => str()->slug($value->slug_en),
             'summary'  => $value->summary,
             'summary_en'  => $value->summary_en,
             'content'  => $value->content,
