@@ -34,15 +34,16 @@ class productRepo
     {
         return $this->query->where('id', $product->id)->update([
             'content' => $value->content,
-            'content_en' => $value->content_en,
+           
             'category_id' => $category->id,
             'price' => $value->price,
             'price_en' => $value->price_en,
         ]);
     }
-    public function create_three($product, $multi_image, $multi_image_en)
+    public function create_three($value , $product, $multi_image, $multi_image_en)
     {
         return $this->query->where('id', $product->id)->update([
+            'content_en' => $value->content_en,
             'multi_image' => $multi_image,
             'multi_image_en' => $multi_image_en,
         ]);
