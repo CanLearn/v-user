@@ -24,6 +24,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 
+
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
 //    Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
