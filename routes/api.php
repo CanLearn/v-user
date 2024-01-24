@@ -4,6 +4,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Panel\CategoryController;
+use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\ProfileController;
 use App\Http\Controllers\Panel\SupportController;
 use Illuminate\Http\Request;
@@ -27,7 +28,10 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
 //    Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('supports', SupportController::class);
-    Route::resource('products', \App\Http\Controllers\Panel\ProductController::class);
-
+    Route::resource('products', ProductController::class)->except(['store']);
+    Route::post('products/store_one', [ProductController::class , 'store_one'])->name('products.store_one');
+    Route::put('products/store_two/{product}', [ProductController::class , 'store_two'])->name('products.store_two');
+    Route::put('products/store_three/{product}', [ProductController::class , 'store_three'])->name('products.store_three');
+    Route::put('products/store_four/{product}', [ProductController::class , 'store_four'])->name('products.store_four');
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
 });

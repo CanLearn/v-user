@@ -14,20 +14,54 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
-
-
-
-
 class ProductController extends Controller
 {
-
-    public function __construct(public productRepo $productRepo){}
+    public $productRepo;
+    public function __construct(productRepo $productRepo){
+        $this->productRepo = $productRepo;
+    }
 
     public function index()
     {
         $products = $this->productRepo->index();
         return response()->json(['date', $products], 200);
     }
+
+    public function store_one(Request $request)
+    {
+        $products = $this->productRepo->create_one($request);
+        return response()->json(['date'=> $products->id ], 200);
+    }
+
+    public function store_two(Request $request , $product , categoryRepo $categoryRepo, supportRepo $supportRepo)
+    {
+        $product = $this->productRepo->getFindId($product);
+
+        $category = $categoryRepo->getById($request->category_id);
+
+        $support = $supportRepo->getMultiId($request->support_id);
+        $this->productRepo->create_two($request , $category , $product);
+        $product->supports()->sync($support);
+        return response()->json(['date', $product->id ], 200);
+    }
+
+    public function store_three(Request $request , $product )
+    {
+        $product = $this->productRepo->getFindId($product);
+        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
+        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
+        $this->productRepo->create_three( $product , $multi_image , $multi_image_en);
+        return response()->json(['date', $product->id ], 200);
+    }
+    public function store_four(Request $request , $product )
+    {
+        $product = $this->productRepo->getFindId($product);
+        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
+        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
+        $this->productRepo->create_three( $product , $video_url , $video_url_en );
+        return response()->json(['date', $product->id ], 200);
+    }
+
 
     public function store(Request $request, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
