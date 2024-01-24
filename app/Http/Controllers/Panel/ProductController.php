@@ -61,9 +61,6 @@ class ProductController extends Controller
         $this->productRepo->create_four( $product , $video_url , $video_url_en );
         return response()->json(['id'=> $product->id ], 200);
     }
-
-    
-
     public function store(Request $request, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
         $category = $categoryRepo->getById($request->category_id);
@@ -77,7 +74,6 @@ class ProductController extends Controller
         $products->supports()->sync($support);
         return response()->json(['ok'], 200);
     }
-
     public function show($product)
     {
         return $this->productRepo->getFindId($product);
