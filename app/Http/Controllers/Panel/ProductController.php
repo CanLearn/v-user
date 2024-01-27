@@ -23,8 +23,8 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = $this->productRepo->index();
-        return response()->json(['id', $products], 200);
+       return  $products = $this->productRepo->index();
+
     }
 
     public function store_one(Request $request)
@@ -62,20 +62,19 @@ class ProductController extends Controller
         return response()->json(['id', $product->id ], 200);
     }
 
+    // public function store(Request $request, categoryRepo $categoryRepo, supportRepo $supportRepo)
+    // {
+    //     $category = $categoryRepo->getById($request->category_id);
+    //     $support = $supportRepo->getMultiId($request->support_id);
+    //     $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
+    //     $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
+    //     $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
+    //     $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
+    //     $products = $this->productRepo->create($request, $multi_image, $multi_image_en, $video_url, $video_url_en, $category);
 
-    public function store(Request $request, categoryRepo $categoryRepo, supportRepo $supportRepo)
-    {
-        $category = $categoryRepo->getById($request->category_id);
-        $support = $supportRepo->getMultiId($request->support_id);
-        $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
-        $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
-        $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
-        $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
-        $products = $this->productRepo->create($request, $multi_image, $multi_image_en, $video_url, $video_url_en, $category);
-
-        $products->supports()->sync($support);
-        return response()->json(['ok'], 200);
-    }
+    //     $products->supports()->sync($support);
+    //     return response()->json(['ok'], 200);
+    // }
 
     public function show($product)
     {
