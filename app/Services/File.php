@@ -31,6 +31,7 @@ class File
             $video->storeAs('files/products/fa/', $video_en , 'public_image_products');
             $fileName[] = $video_en ;
         }
+        
         return $fileName;
     }
 
@@ -64,3 +65,10 @@ class File
         return $fileName;
     }
 }
+
+
+/**
+ * sesion 1 : title , titile en  , proce en fa , category , support  , summary en fa , 
+ * sesion 2: video fa content fa imgae fa 
+ * sesion 3:  video en content en imgae en 
+ */

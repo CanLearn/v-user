@@ -28,12 +28,12 @@ class CategoryController extends Controller
 
     public function show($category)
     {
-        return $category = $this->categoryRepo->getTitleId($category);
+        return $category = $this->categoryRepo->getByShowId($category);
     }
 
     public function update(UpdateCategoryRequest $request, $category)
     {
-        $this->categoryRepo->delete($request , $category);
+        $this->categoryRepo->update($request , $category);
         return response()->json(['دسته بندی ویرایش  شد'], 200);
     }
 
@@ -42,5 +42,10 @@ class CategoryController extends Controller
     {
         $this->categoryRepo->delete($category);
         return response()->json(['دسته بندی حذف شد '], 200);
+    }
+
+    public function parent(){
+        $categories = $this->categoryRepo->getParentId();
+        return response()->json( $categories , 200);
     }
 }

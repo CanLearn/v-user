@@ -13,7 +13,8 @@ class SupportController extends Controller
 
     public function index()
     {
-        return $support = $this->supportRepo->index();
+         $support = $this->supportRepo->index();
+         return response()->json($support);
     }
 
     public function store(StoreSupportRequest $request): \Illuminate\Http\JsonResponse

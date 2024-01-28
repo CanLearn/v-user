@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Support extends Model
 {
@@ -16,16 +17,15 @@ class Support extends Model
         'link',
         'content',
         'user_id'
-        ];
+    ];
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
-    public function products()
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class , 'support_products');
+        return $this->belongsToMany(Product::class, 'support_products')
+            ->withPivot('support_id', 'product_id');
     }
-
 }

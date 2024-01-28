@@ -34,7 +34,7 @@ class categoryRepo
 
     public function update($value, $id)
     {
-        return Category::query()->where('id', $id->id)->update([
+        return Category::query()->where('id', $id)->update([
             'title' => $value->title,
             'slug' => SlugService::createSlug(Category::class, 'slug', $value->title),
             'title_en' => $value->title_en,
@@ -56,5 +56,13 @@ class categoryRepo
     public function getArticleInCategory($category)
     {
         return Category::query()->where('id' , $category)->with('articles.author')->first();
+    }
+
+    public function getParentId(){
+        return Category::query()->where('parent_id' , null)->with('parent')->get();
+    }
+
+    public function getByShowId($id){
+        return Category::query()->where('id' , $id)->with('child')->first();
     }
 }

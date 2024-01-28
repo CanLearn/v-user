@@ -32,7 +32,14 @@ class Product extends Model
         'user_id' ,
         'category_id'
     ];
-    public function sluggable(): array
+    protected $hidden = [
+        'multi_image_en' ,
+        'multi_image' ,
+        'video_url' ,
+        'video_url_en' ,
+        'status_price' ,
+    ];
+        public function sluggable(): array
     {
         return [
             'slug' => [
@@ -42,9 +49,9 @@ class Product extends Model
     }
     protected $casts = [
         'multi_image'=> 'array',
-        'multi_image_en'=> 'array',
-        'video_url'=> 'array',
-        'video_url_en'=> 'array',
+        'multi_image_en'=> 'json',
+        'video_url'=> 'json',
+        'video_url_en'=> 'json',
     ];
     const STATUS_PRICE_DISABLE = 'disable';
     const STATUS_PRICE_ANSIBLE = 'ansible';
@@ -53,13 +60,44 @@ class Product extends Model
         self::STATUS_PRICE_DISABLE,
         self::STATUS_PRICE_ANSIBLE
     ];
+    protected $appends = [ 'multi_image_fa' , 'image_en' , 'video_fa' , 'video_en' ];
 
-    public function categories():BelongsTo
+    public function categories()
     {
-        return $this->belongsTo(Category::class );
+        return $this->belongsToMany(Category::class)
+            ->withPivot('category_id'); 
     }
     public function supports():BelongsToMany
     {
         return $this->belongsToMany(Support::class , 'support_products');
+    }
+
+    public function getMultiImageFaAttribute()
+    {
+
+        return collect($this->multi_image)->map(function ($imageName) {
+            return asset('images/products/fa/' . $imageName);
+        })->toArray();
+    }
+
+    public function getImageEnAttribute()
+    {
+        return collect($this->multi_image_en)->map(function ($imageName) {
+            return asset('images/products/en/' . $imageName);
+        })->toArray();
+    }
+
+    public function getVideoFaAttribute()
+    {
+        return collect($this->video_url)->map(function ($imageName) {
+            return asset('files/products/fa/' . $imageName);
+        })->toArray();
+    }
+
+    public function getVideoEnAttribute()
+    {
+        return collect($this->video_url_en)->map(function ($imageName) {
+            return asset('files/products/en/' . $imageName);
+        })->toArray();
     }
 }
