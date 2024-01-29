@@ -32,13 +32,13 @@ class Product extends Model
         'user_id' ,
         'category_id'
     ];
-    protected $hidden = [
-        'multi_image_en' ,
-        'multi_image' ,
-        'video_url' ,
-        'video_url_en' ,
-        'status_price' ,
-    ];
+    // protected $hidden = [
+    //     'multi_image_en' ,
+    //     'multi_image' ,
+    //     'video_url' ,
+    //     'video_url_en' ,
+    //     'status_price' ,
+    // ];
         public function sluggable(): array
     {
         return [
