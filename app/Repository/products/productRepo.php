@@ -11,14 +11,17 @@ use Psy\Util\Str;
 class productRepo
 {
     private $query;
+
     public function __construct()
     {
         $this->query = Product::query();
     }
+
     public function index()
     {
         return $this->query->orderByDesc('created_at')->paginate();
     }
+
     public function create_one($value)
     {
         return $this->query->create([
@@ -31,6 +34,7 @@ class productRepo
             'user_id' => auth()->id()
         ]);
     }
+
     public function create_two($value, $category, $product)
     {
         return $this->query->where('id', $product->id)->update([
@@ -41,6 +45,7 @@ class productRepo
             'price_en' => $value->price_en,
         ]);
     }
+
     public function create_three($value, $product, $multi_image, $multi_image_en)
     {
         return $this->query->where('id', $product->id)->update([
@@ -65,7 +70,7 @@ class productRepo
 
     public function findSupportId($id)
     {
-       return $this->query->where('id', $id)->with(['supports' => function ($q) {
+        return $this->query->where('id', $id)->with(['supports' => function ($q) {
             return $q->select(['id', 'title'])->get();
         }])->first();
     }
@@ -99,7 +104,6 @@ class productRepo
     }
 
 
-
     public function update_one($value, $id, $category)
     {
         return $this->query->where('id', $id->id)->update([
@@ -115,27 +119,62 @@ class productRepo
             'user_id' => auth()->id()
         ]);
     }
-    public function update_two($value,  $product, $multi_image, $video_url)
+
+    public function update_two($value, $product, $multi_image  , $video_url, $oldImage, $oldVideo)
     {
+        $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
+        $oldImageJson = !empty($oldImage->multi_image) ? json_encode($oldImage->multi_image) : null;
+
+        $mergedImagesArray = null;
+
+        if (!empty($multi_image) && !empty($oldImageJson)) {
+            $mergedImagesArray = array_merge(json_decode($oldImageJson, true), $multi_image);
+        } elseif (empty($multi_image) && !empty($oldImageJson)) {
+            $mergedImagesArray = json_decode($oldImageJson, true);
+        } elseif (!empty($multi_image) && empty($oldImageJson)) {
+            $mergedImagesArray = $multi_image;
+        }
+
+        $mergedImages = !empty($mergedImagesArray) ? json_encode($mergedImagesArray) : null;
+        $mergedVideos = $oldVideo ? implode(',', $oldVideo) . ',' . $video_url : $video_url;
 
         return $this->query->where('id', $product->id)->update([
             'content' => $value->content,
-            'multi_image' => $multi_image,
-            'video_url' => $video_url,
-
+            'multi_image' => $mergedImages,
+            'video_url' => $mergedVideos,
         ]);
     }
-    public function update_three($value,  $product, $multi_image_en, $video_url_en)
+
+    public function update_three($value, $product, $multi_image  , $video_url, $oldImage, $oldVideo)
     {
+        $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
+        $oldImageJson = !empty($oldImage->multi_image) ? json_encode($oldImage->multi_image) : null;
+        $mergedImagesArray = null;
+        if (!empty($multi_image) && !empty($oldImageJson)) {
+            $mergedImagesArray = array_merge(json_decode($oldImageJson, true), $multi_image);
+        } elseif (empty($multi_image) && !empty($oldImageJson)) {
+            $mergedImagesArray = json_decode($oldImageJson, true);
+        } elseif (!empty($multi_image) && empty($oldImageJson)) {
+            $mergedImagesArray = $multi_image;
+        }
+        $mergedImages = !empty($mergedImagesArray) ? json_encode($mergedImagesArray) : null;
+        $mergedVideos = $oldVideo ? implode(',', $oldVideo) . ',' . $video_url : $video_url;
         return $this->query->where('id', $product->id)->update([
-            'content_en' => $value->content_en,
-            'multi_image_en' => $multi_image_en,
-            'video_url_en' => $video_url_en,
+            'content' => $value->content,
+            'multi_image_en' => $mergedImages,
+            'video_url_en' => $mergedVideos,
         ]);
+    }
+
+    public function status($id, $status)
+    {
+        return Product::query()->where('id', $id)->update([
+            'status_price' => $status
+        ]);
+    }
+
+    public function getImageForeach(mixed $image)
+    {
+        return Product::query()->where('multi_image', $image)->get();
     }
 }
-/**
- * sesion 1 : title , titile en  , proce en fa , category , support  , summary en fa , 
- * sesion 2: video fa content fa imgae fa 
- * sesion 3:  video en content en imgae en 
- */

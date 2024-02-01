@@ -32,13 +32,13 @@ class Product extends Model
         'user_id' ,
         'category_id'
     ];
-    // protected $hidden = [
-    //     'multi_image_en' ,
-    //     'multi_image' ,
-    //     'video_url' ,
-    //     'video_url_en' ,
-    //     'status_price' ,
-    // ];
+    protected $hidden = [
+        'multi_image_en' ,
+        'multi_image' ,
+        'video_url' ,
+        'video_url_en' ,
+//        'status_price' ,
+    ];
         public function sluggable(): array
     {
         return [
@@ -48,13 +48,13 @@ class Product extends Model
         ];
     }
     protected $casts = [
-        'multi_image'=> 'array',
+        'multi_image' => 'json',
         'multi_image_en'=> 'json',
         'video_url'=> 'json',
         'video_url_en'=> 'json',
     ];
     const STATUS_PRICE_DISABLE = 'disable';
-    const STATUS_PRICE_ANSIBLE = 'ansible';
+    const STATUS_PRICE_ANSIBLE = 'enable';
 
     static $status_price = [
         self::STATUS_PRICE_DISABLE,
@@ -65,7 +65,7 @@ class Product extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class)
-            ->withPivot('category_id'); 
+            ->withPivot('category_id');
     }
     public function supports():BelongsToMany
     {
