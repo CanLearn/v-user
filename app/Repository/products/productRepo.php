@@ -39,7 +39,6 @@ class productRepo
     {
         return $this->query->where('id', $product->id)->update([
             'content' => $value->content,
-
             'category_id' => $category->id,
             'price' => $value->price,
             'price_en' => $value->price_en,
@@ -71,7 +70,7 @@ class productRepo
     public function findSupportId($id)
     {
         return $this->query->where('id', $id)->with(['supports' => function ($q) {
-            return $q->select(['id', 'title'])->get();
+             $q->select(['id', 'title'])->get();
         }])->first();
     }
 
@@ -176,5 +175,10 @@ class productRepo
     public function getImageForeach(mixed $image)
     {
         return Product::query()->where('multi_image', $image)->get();
+    }
+
+    public function getFindProducts($id)
+    {
+        return Product::query()->where('id', $id)->first();
     }
 }

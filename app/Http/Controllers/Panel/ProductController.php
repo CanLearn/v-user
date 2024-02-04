@@ -32,12 +32,26 @@ class ProductController extends Controller
 
     public function store_one(Request $request)
     {
+        $request->validate([
+            'title' => ['required'],
+            'title_en' => ['required'],
+            'summary' => ['nullable', 'string'],
+            'summary_en' => ['nullable', 'string'],
+        ]);
         $products = $this->productRepo->create_one($request);
         return response()->json(['id' => $products->id], 200);
     }
 
     public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
+        $request->validate([
+            'category_id' => ['required'],
+            'support_id' => ['required'],
+            'price' => ['nullable', 'string'],
+            'price_en' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+        ]);
+
         $product = $this->productRepo->getFindId($product);
 
         $category = $categoryRepo->getById($request->category_id);
@@ -50,6 +64,13 @@ class ProductController extends Controller
 
     public function store_three(Request $request, $product)
     {
+        $validator = $request->validate([
+            'multi_image' => ['nullable',  'mimes:jpeg,png,jpg,gif,svg'],
+            'multi_image_en' => ['nullable',  'mimes:jpeg,png,jpg,gif,svg'],
+            'content_en' => ['nullable', 'string'],
+        ]);
+
+    
         $product = $this->productRepo->getFindId($product);
         $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
         // $multi_image = json_encode($multi_image);
@@ -61,6 +82,10 @@ class ProductController extends Controller
 
     public function store_four(Request $request, $product)
     {
+        $request->validate([
+            'video_url' => ['nullable'  , 'mimes:mp4,mov,ogg,qt'],
+            'video_url_en' => ['nullable' ,  'mimes:mp4,mov,ogg,qt'],
+        ]);
         $product = $this->productRepo->getFindId($product);
         $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
         $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
@@ -70,12 +95,26 @@ class ProductController extends Controller
 
     public function show($product)
     {
-        return $this->productRepo->findSupportId($product);
+        return  $product =  $this->productRepo->findSupportId($product);
+        // dd($product);
+        // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
+        // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
+
+        // return $this->productRepo->findSupportId($product) ;
     }
 
 
     public function update_one(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
+        $request->validate([
+            'category_id' => ['required'],
+            'support_id' => ['required'],
+            'title' => ['nullable', 'string'],
+            'title_en' => ['nullable', 'string'],
+            'summary' => ['nullable', 'string'],
+            'price' => ['nullable', 'string'],
+            'price_en' => ['nullable', 'string'],
+        ]);
 
         $productId = $this->productRepo->getFindId($product);
         $category = $categoryRepo->getById($request->category_id);
@@ -97,24 +136,23 @@ class ProductController extends Controller
         if (!empty($relativePathImage)) {
             $existingImages = Product::query()->where(function ($query) use ($relativePathImage) {
                 foreach ($relativePathImage as $path) {
-                     $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
+                    $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
                 }
             })->first();
-//            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
+            //            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
         }
         $oldVideos = $request->oldVideos;
         $basePath = "http://192.168.88.253:8003/files/products/fa/";
         $relativePathVideo = str_replace($basePath, '', $oldVideos);
-        if($relativePathVideo)
-        {
-             $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
+        if ($relativePathVideo) {
+            $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
                 foreach ($relativePathVideo as $path) {
-                     $query->orWhere('video_url', 'LIKE', '%' . $path . '%');
+                    $query->orWhere('video_url', 'LIKE', '%' . $path . '%');
                 }
             })->first();
         }
 
-//        $productCheckIdVideo = Product::query()->where('id', $existingVideos->id)->update(['video_url' => $relativePathVideo]);
+        //        $productCheckIdVideo = Product::query()->where('id', $existingVideos->id)->update(['video_url' => $relativePathVideo]);
         if ($request->hasFile('multi_image')) {
             if (!empty($product->video_url) > 2) {
                 foreach ($product->multi_image as $oldImage) {
@@ -139,7 +177,7 @@ class ProductController extends Controller
             $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
         }
         $video_url = $video_url ?? $product->video_url;
-        $this->productRepo->update_two($request, $product, $multi_image, $video_url , $existingImages  , $existingVideos );
+        $this->productRepo->update_two($request, $product, $multi_image, $video_url, $existingImages, $existingVideos);
         return response()->json(['id' => $product->id], 200);
     }
 
@@ -157,13 +195,12 @@ class ProductController extends Controller
                     $query->orWhere('multi_image_en', 'LIKE', '%' . $path . '%');
                 }
             })->first();
-//            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
+            //            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
         }
         $oldVideos = $request->oldVideos_en;
         $basePath = "http://192.168.88.253:8003/files/products/en/";
         $relativePathVideo = str_replace($basePath, '', $oldVideos);
-        if($relativePathVideo)
-        {
+        if ($relativePathVideo) {
             $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
                 foreach ($relativePathVideo as $path) {
                     $query->orWhere('video_url_en', 'LIKE', '%' . $path . '%');
@@ -197,17 +234,9 @@ class ProductController extends Controller
         }
         $video_url_en = $video_url_en ?? $product->video_url_en;
 
-        $this->productRepo->update_three($request, $product, $multi_image_en, $video_url_en , $existingImages  , $existingVideos);
+        $this->productRepo->update_three($request, $product, $multi_image_en, $video_url_en, $existingImages, $existingVideos);
         return response()->json(['id' => $product->id], 200);
     }
-    // public function update_four(Request $request, $product)
-    // {
-    //     $product = $this->productRepo->getFindId($product);
-    //     $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
-    //     $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
-    //     $this->productRepo->update_four($product, $video_url, $video_url_en);
-    //     return response()->json(['id' => $product->id], 200);
-    // }
     public function destroy($product)
     {
         $product = $this->productRepo->getFindId($product);
@@ -254,6 +283,8 @@ class ProductController extends Controller
 
     public function price_status_disable($id, $status)
     {
+        $products = $this->productRepo->getFindProducts($id);
+        if (is_null($products))  return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
 
         if ($status == "1") {
             $this->productRepo->status($id, Product::STATUS_PRICE_ANSIBLE);
@@ -266,6 +297,5 @@ class ProductController extends Controller
                 return response()->json(["status" => "failed", 'message' => "failed"], 405);
             }
         }
-
     }
 }

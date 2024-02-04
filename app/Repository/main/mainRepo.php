@@ -18,7 +18,7 @@ class mainRepo
         return Mainlanding::query()->create([
             'title' => $data['title'],
             'title_en' => $data['title_en'],
-            'image' => $image,
+            'image' => $image ,
             'sub_title' => $data['sub_title'],
             'sub_title_en' => $data['sub_title_en'],
             'content' => $data['content'],
@@ -37,7 +37,7 @@ class mainRepo
         return Mainlanding::query()->where('id', $id->id)->update([
             'title' => $data['title'] ?? $id->title,
             'title_en' => $data['title_en'] ?? $id->title_en,
-            'image' => $image ?? $image,
+            'image' => $image ?? $id->image,
             'sub_title' => $data['sub_title'] ?? $id->sub_title_en,
             'sub_title_en' => $data['sub_title_en'] ?? $id->sub_title_en,
             'content' => $data['content'] ?? $id->content,

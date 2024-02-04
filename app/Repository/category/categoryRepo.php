@@ -34,12 +34,13 @@ class categoryRepo
 
     public function update($value, $id)
     {
+        $categoryId = $this->getById($id);
         return Category::query()->where('id', $id)->update([
-            'title' => $value->title,
-            'slug' => SlugService::createSlug(Category::class, 'slug', $value->title),
-            'title_en' => $value->title_en,
-            'slug_en' => Str::slug($value->title_en),
-            'parent_id' => $value->parent_id,
+            'title' => $value->title ?? $categoryId->title,
+            'slug' => SlugService::createSlug(Category::class, 'slug', $value->title ?? $categoryId->title),
+            'title_en' => $value->title_en ?? $categoryId->title_en,
+            'slug_en' => Str::slug($value->title_en ?? $categoryId->title_en),
+            'parent_id' =>  $value->parent_id ,
             'user_id' => auth()->id(),
         ]);
     }
