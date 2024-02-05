@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Front\LandingController;
 use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\ProfileController;
@@ -46,4 +47,8 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
     Route::put('products/update_four/{product}', [ProductController::class, 'update_four'])->name('products.update_four');
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('category-parent', [CategoryController::class, 'parent'])->name('parent');
+});
+
+Route::name('front.')->group(function() {
+    Route::get('/', [LandingController::class, 'index'])->name('parent');
 });
