@@ -50,5 +50,6 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
 });
 
 Route::name('front.')->group(function() {
-    Route::get('/', [LandingController::class, 'index'])->name('parent');
+    Route::get('/', [LandingController::class, 'index'])->name('index');
+    Route::get('/category-product/{slug}', [LandingController::class, 'category_product'])->name('category-product');
 });
