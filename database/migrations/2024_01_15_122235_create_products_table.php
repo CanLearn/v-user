@@ -28,11 +28,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('price_en')->nullable();
             $table->enum('status_price', \App\Models\Panel\Product::$status_price);
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate();
-            $table->foreignId('category_id')
-                ->nullable()
-                ->constrained('categories')
-                ->onUpdate('set null')
-                ->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

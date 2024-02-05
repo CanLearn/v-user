@@ -43,8 +43,8 @@ class ImagelandingController extends Controller
     public function update(Request $request, $imagelanding)
     {
         $request->validate([
-            'image' => ['nullable', 'image' , 'mimes:jpeg,png,jpg,gif,svg'],
-            'image_en' => ['nullable', 'image' , 'mimes:jpeg,png,jpg,gif,svg'],
+            'image' => ['nullable',  'mimes:jpeg,png,jpg,gif,svg'],
+            'image_en' => ['nullable', 'mimes:jpeg,png,jpg,gif,svg'],
             'content_en' => ['nullable', 'string'],
             'title' => ['required', 'string'],
             'title_en' => ['required', 'string'],

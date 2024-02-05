@@ -30,7 +30,6 @@ class Product extends Model
         'price_en',
         'status_price',
         'user_id' ,
-        'category_id'
     ];
     protected $hidden = [
         'multi_image_en' ,
@@ -64,8 +63,7 @@ class Product extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class)
-            ->withPivot('category_id');
+        return $this->belongsToMany(Category::class , 'category_product');
     }
     public function supports():BelongsToMany
     {

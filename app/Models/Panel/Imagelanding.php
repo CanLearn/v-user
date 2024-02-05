@@ -49,9 +49,9 @@ class Imagelanding extends Model
     //     return asset('images/image_landing/' . $this->image);
     // }
 
-    protected $appends = ['image_persion', 'image_enlish']; // نام صحیح برای متغیرها
+    protected $appends = ['image_persion', 'image_english']; // نام صحیح برای متغیرها
 
-    public function getImageEnlishAttribute()
+    public function getImageEnglishAttribute()
     {
         return asset('images/image_en_landing/' . $this->image_en);
     }

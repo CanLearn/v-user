@@ -51,14 +51,13 @@ class ProductController extends Controller
             'price_en' => ['nullable', 'string'],
             'content' => ['nullable', 'string'],
         ]);
-
         $product = $this->productRepo->getFindId($product);
 
-        $category = $categoryRepo->getById($request->category_id);
-
+        $category = $categoryRepo->getFindById($request->category_id);
         $support = $supportRepo->getMultiId($request->support_id);
-        $this->productRepo->create_two($request, $category, $product);
+        $this->productRepo->create_two($request,  $product);
         $product->supports()->sync($support);
+        $product->categories()->sync($category);
         return response()->json(['id' => $product->id], 200);
     }
 
@@ -70,7 +69,7 @@ class ProductController extends Controller
             'content_en' => ['nullable', 'string'],
         ]);
 
-    
+
         $product = $this->productRepo->getFindId($product);
         $multi_image = $request->multi_image ? File::image($request->file('multi_image')) : null;
         // $multi_image = json_encode($multi_image);
@@ -115,12 +114,13 @@ class ProductController extends Controller
             'price' => ['nullable', 'string'],
             'price_en' => ['nullable', 'string'],
         ]);
-
         $productId = $this->productRepo->getFindId($product);
         $category = $categoryRepo->getById($request->category_id);
         $support = $supportRepo->getMultiId($request->support_id);
-        $this->productRepo->update_one($request, $productId, $category);
+        $this->productRepo->update_one($request, $productId);
         $productId->supports()->sync($support);
+        $productId->categories()->detach();
+        $productId->categories()->attach($category);
         return response()->json(['id' => $productId->id], 200);
     }
 

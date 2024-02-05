@@ -13,7 +13,7 @@ class videoRepo
         return Videolanding::query()->paginate();
     }
 
-    public function store($data , $video , $video_en)
+    public function store($data, $video, $video_en)
     {
         return Videolanding::query()->create([
             'title' => $data['title'],
@@ -33,7 +33,7 @@ class videoRepo
         return Videolanding::query()->findOrFail($is);
     }
 
-    public function update($data, $id , $video , $video_en)
+    public function update($data, $id, $video, $video_en)
     {
         return Videolanding::query()->where('id', $id->id)->update([
             'title' => $data['title'] ?? $id->title,
@@ -51,5 +51,10 @@ class videoRepo
     public function delete($id)
     {
         return Videolanding::query()->where('id', $id)->delete();
+    }
+
+    public function getAllLanding()
+    {
+        return  Videolanding::query()->get();
     }
 }

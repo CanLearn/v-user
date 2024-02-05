@@ -35,11 +35,10 @@ class productRepo
         ]);
     }
 
-    public function create_two($value, $category, $product)
+    public function create_two($value,  $product)
     {
         return $this->query->where('id', $product->id)->update([
             'content' => $value->content,
-            'category_id' => $category->id,
             'price' => $value->price,
             'price_en' => $value->price_en,
         ]);
@@ -103,7 +102,7 @@ class productRepo
     }
 
 
-    public function update_one($value, $id, $category)
+    public function update_one($value, $id)
     {
         return $this->query->where('id', $id->id)->update([
             'title' => $value->title ?? $id->title,
@@ -114,7 +113,6 @@ class productRepo
             'summary_en' => $value->summary_en ?? $id->summary_en,
             'price' => $value->price ?? $id->price,
             'price_en' => $value->price_en ?? $id->price_en,
-            'category_id' => $category->id,
             'user_id' => auth()->id()
         ]);
     }

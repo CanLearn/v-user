@@ -46,4 +46,9 @@ class footerRepo
     {
         return Footerlanding::query()->where('id' , $id)->delete() ;
     }
+
+    public function getAllLanding()
+    {
+        return Footerlanding::query()->get() ;
+    }
 }

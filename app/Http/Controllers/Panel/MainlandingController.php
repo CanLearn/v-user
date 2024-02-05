@@ -21,7 +21,7 @@ class MainlandingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'image' => ['required', 'image' , 'mimes:jpeg,png,jpg,gif,svg'],
+            'image' => ['required' , 'mimes:jpeg,png,jpg,gif,svg'],
             'content_en' => ['required', 'string'],
             'title' => ['required', 'string'],
             'title_en' => ['required', 'string'],
@@ -44,7 +44,7 @@ class MainlandingController extends Controller
     public function update(Request $request,  $mainlanding)
     {
         $request->validate([
-            'image' => ['required', 'image' , 'mimes:jpeg,png,jpg,gif,svg'],
+            'image' => ['required' , 'mimes:jpeg,png,jpg,gif,svg'],
             'content_en' => ['required', 'string'],
             'title' => ['required', 'string'],
             'title_en' => ['required', 'string'],

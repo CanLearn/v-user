@@ -66,4 +66,13 @@ class categoryRepo
     public function getByShowId($id){
         return Category::query()->where('id' , $id)->with('child')->first();
     }
+
+    public function getFindSlug($slug)
+    {
+        return Category::query()->where('slug_en' , $slug )->first() ;
+    }
+    public function getFindById($id)
+    {
+        return Category::query()->where('id' , $id)->get()->pluck('id');
+    }
 }

@@ -38,11 +38,11 @@ class imageRepo
         return Imagelanding::query()->where('id', $id)->update([
             'title' => $data['title'] ?? $image->title,
             'slug' => SlugService::createSlug(Imagelanding::class, 'slug', $data['title'] ?? $image->title),
-            'image' => $video ?? $image->video,
+            'image' => $video ?? $image->image,
             'content' => $data['content'] ?? $image->content,
             'title_en' => $data['title_en'] ?? $image->title_en,
             'slug_en' => Str::slug($data['title_en'] ?? $image->title_en),
-            'image_en' => $video_en ?? $image->video_en,
+            'image_en' => $video_en ?? $image->image_en,
             'content_en' => $data['content_en'] ?? $image->content_en,
             'user_id' => auth()->user()->id
         ]);
@@ -51,5 +51,10 @@ class imageRepo
     public function delete($id)
     {
         return Imagelanding::query()->where('id', $id)->delete();
+    }
+
+    public function getAllLanding()
+    {
+        return Imagelanding::query()->get() ;
     }
 }

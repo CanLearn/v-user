@@ -10,7 +10,7 @@ class mainRepo
 {
     public function index()
     {
-        return Mainlanding::query()->paginate();
+        return Mainlanding::query()->first();
     }
 
     public function store($data, $image)
@@ -18,7 +18,7 @@ class mainRepo
         return Mainlanding::query()->create([
             'title' => $data['title'],
             'title_en' => $data['title_en'],
-            'image' => $image ,
+            'image' => $image,
             'sub_title' => $data['sub_title'],
             'sub_title_en' => $data['sub_title_en'],
             'content' => $data['content'],
@@ -48,5 +48,10 @@ class mainRepo
     public function delete($id)
     {
         return Mainlanding::query()->where('id', $id)->delete();
+    }
+
+    public function getAllLanding()
+    {
+        return Mainlanding::query()->get() ;
     }
 }
