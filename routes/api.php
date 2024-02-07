@@ -50,6 +50,20 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
 });
 
 Route::name('front.')->group(function() {
-    Route::get('/', [LandingController::class, 'index'])->name('index');
+    // Route::get('/fa/', [LandingController::class, 'index'])->name('index');
+    Route::get('categories/en', [LandingController::class, 'categoriesEn'])->name('categoriesEn');
+    Route::get('categories/fa', [LandingController::class, 'categoriesFa'])->name('categoriesFa');
+    Route::get('headers/en', [LandingController::class, 'headerEn'])->name('headerEn');
+    Route::get('headers/fa', [LandingController::class, 'headerFa'])->name('headerFa');
+
+    Route::get('video/en', [LandingController::class, 'videoEn'])->name('videoEn');
+    Route::get('video/fa', [LandingController::class, 'videoFa'])->name('videoFa');
+
+    Route::get('image/en', [LandingController::class, 'imageEn'])->name('imageEn');
+    Route::get('image/fa', [LandingController::class, 'imageFa'])->name('imageFa');
+
+    Route::get('footer/en', [LandingController::class, 'footerEn'])->name('footerEn');
+    Route::get('footer/fa', [LandingController::class, 'footerFa'])->name('footerFa');
+
     Route::get('/category-product/{slug}', [LandingController::class, 'category_product'])->name('category-product');
 });

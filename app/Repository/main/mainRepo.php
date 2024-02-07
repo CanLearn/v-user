@@ -10,7 +10,7 @@ class mainRepo
 {
     public function index()
     {
-        return Mainlanding::query()->first();
+        return Mainlanding::query()->orderByDesc('created_at')->first();
     }
 
     public function store($data, $image)
@@ -52,6 +52,24 @@ class mainRepo
 
     public function getAllLanding()
     {
-        return Mainlanding::query()->get() ;
+        return Mainlanding::query()->get();
+    }
+    public function getFindEn()
+    {
+        return Mainlanding::query()->select([
+            'sub_title_en',
+            'title_en',
+            'content_en',
+            'image'
+        ])->first();
+    }
+    public function getFindPersaon()
+    {
+        return Mainlanding::query()->select([
+            'sub_title',
+            'title',
+            'content',
+            'image'
+        ])->first();
     }
 }

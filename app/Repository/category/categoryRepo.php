@@ -40,7 +40,7 @@ class categoryRepo
             'slug' => SlugService::createSlug(Category::class, 'slug', $value->title ?? $categoryId->title),
             'title_en' => $value->title_en ?? $categoryId->title_en,
             'slug_en' => Str::slug($value->title_en ?? $categoryId->title_en),
-            'parent_id' =>  $value->parent_id ,
+            'parent_id' =>  $value->parent_id,
             'user_id' => auth()->id(),
         ]);
     }
@@ -56,23 +56,40 @@ class categoryRepo
 
     public function getArticleInCategory($category)
     {
-        return Category::query()->where('id' , $category)->with('articles.author')->first();
+        return Category::query()->where('id', $category)->with('articles.author')->first();
     }
 
-    public function getParentId(){
-        return Category::query()->where('parent_id' , null)->with('parent')->get();
+    public function getParentId()
+    {
+        return Category::query()->where('parent_id', null)->with('parent')->get();
     }
 
-    public function getByShowId($id){
-        return Category::query()->where('id' , $id)->with('child')->first();
+    public function getByShowId($id)
+    {
+        return Category::query()->where('id', $id)->with('child')->first();
     }
 
     public function getFindSlug($slug)
     {
-        return Category::query()->where('slug_en' , $slug )->first() ;
+        return Category::query()->where('slug_en', $slug)->first();
     }
     public function getFindById($id)
     {
-        return Category::query()->where('id' , $id)->get()->pluck('id');
+        return Category::query()->where('id', $id)->get()->pluck('id');
+    }
+
+    public function getFindPesaon()
+    {
+        return Category::query()->select([
+            'title_en',
+            'slug_en',
+        ])->get();
+    }
+    public function getFindPesaonEn()
+    {
+        return Category::query()->select([
+            'title',
+            'slug',
+        ])->get();
     }
 }

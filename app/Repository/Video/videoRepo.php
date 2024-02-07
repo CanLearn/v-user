@@ -57,4 +57,24 @@ class videoRepo
     {
         return  Videolanding::query()->get();
     }
+
+    public function getFindEn()
+    {
+        return Videolanding::query()->select([
+            'title_en',
+            'slug_en',
+            'video_en',
+            'content_en',
+        ])->get();
+    }
+
+    public function getFindFa()
+    {
+        return Videolanding::query()->select([
+            'title',
+            'slug',
+            'video',
+            'content',
+        ])->get();
+    }
 }

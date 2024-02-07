@@ -12,28 +12,74 @@ use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
-    public function index(mainRepo $mainRepo, videoRepo $videoRepo, imageRepo $imageRepo, footerRepo $footerRepo , categoryRepo $categoryRepo)
+    public function index(mainRepo $mainRepo, videoRepo $videoRepo, imageRepo $imageRepo, footerRepo $footerRepo)
     {
         $mainRepo = $mainRepo->getAllLanding();
         $videoRepo = $videoRepo->getAllLanding();
         $imageRepo = $imageRepo->getAllLanding();
         $footerRepo = $footerRepo->getAllLanding();
-        $categoryRepo = $categoryRepo->getParentId() ;
+
         return [
-           'mainRepo' =>  $mainRepo,
-           'videoRepo' =>  $videoRepo,
-           'imageRepo' =>   $imageRepo,
-           'footerRepo' =>  $footerRepo ,
-           'categoryRepo' => $categoryRepo
+            'mainRepo' =>  $mainRepo,
+            'videoRepo' =>  $videoRepo,
+            'imageRepo' =>   $imageRepo,
+            'footerRepo' =>  $footerRepo,
         ];
     }
 
-    public function category_product($slug ,  categoryRepo $categoryRepo)
+    public function category_product($slug,  categoryRepo $categoryRepo)
     {
-        $category = $categoryRepo->getFindSlug($slug) ;
+        $category = $categoryRepo->getFindSlug($slug);
         // $category = Category::query()->where('slug_en' , $slug )->first() ;
 
         dd($category->products);
-        return 'asas' ;
+        return 'asas';
+    }
+    public function categoriesEn(categoryRepo $categoryRepo)
+    {
+        return  $category = $categoryRepo->getFindPesaon();
+    }
+    public function categoriesFa(categoryRepo $categoryRepo)
+    {
+        return  $category = $categoryRepo->getFindPesaonEn();
+    }
+
+    public function headerEn(mainRepo $mainRepo)
+    {
+        return $main = $mainRepo->getFindEn();
+    }
+    public function headerFa(mainRepo $mainRepo)
+    {
+        return $main = $mainRepo->getFindPersaon();
+    }
+
+    public function videoEn(videoRepo $videoRepo)
+    {
+        return $video = $videoRepo->getFindEn();
+    }
+
+    public function videoFa(videoRepo $videoRepo)
+    {
+        return $video = $videoRepo->getFindFa();
+    }
+
+    public function imageEn(imageRepo $imageRepo)
+    {
+        return $image = $imageRepo->getFindEn();
+    }
+
+    public function imageFa(imageRepo $imageRepo)
+    {
+        return $image = $imageRepo->getFindFa();
+    }
+
+    public function footerEn( footerRepo $footerRepo)
+    {
+        return $footer = $footerRepo->getFindEn() ;
+    }
+
+    public function footerFa( footerRepo $footerRepo)
+    {
+        return $footer = $footerRepo->getFindFa() ;
     }
 }

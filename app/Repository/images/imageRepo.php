@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Repository\images ;
+namespace App\Repository\images;
+
 use App\Models\Panel\Imagelanding;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ class imageRepo
         return Imagelanding::query()->orderByDesc('created_at')->paginate();
     }
 
-    public function store($data , $video , $video_en)
+    public function store($data, $video, $video_en)
     {
         return Imagelanding::query()->create([
             'title' => $data['title'],
@@ -32,7 +33,7 @@ class imageRepo
         return Imagelanding::query()->findOrFail($is);
     }
 
-    public function update($data, $id , $video , $video_en)
+    public function update($data, $id, $video, $video_en)
     {
         $image = $this->getFindId($id);
         return Imagelanding::query()->where('id', $id)->update([
@@ -55,6 +56,27 @@ class imageRepo
 
     public function getAllLanding()
     {
-        return Imagelanding::query()->get() ;
+        return Imagelanding::query()->get();
+    }
+
+    public function getFindEn()
+    {
+        return Imagelanding::query()->select([
+            'title_en',
+            'slug_en',
+            'image_en',
+            'content_en',
+        ])->get();
+    }
+
+    public function getFindFa()
+    {
+        return Imagelanding::query()->select([
+            'title',
+            'slug',
+            'image',
+            'content',
+        ])->get();
+
     }
 }

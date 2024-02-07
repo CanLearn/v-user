@@ -55,7 +55,7 @@ class ProductController extends Controller
 
         $category = $categoryRepo->getFindById($request->category_id);
         $support = $supportRepo->getMultiId($request->support_id);
-        $this->productRepo->create_two($request,  $product);
+        $this->productRepo->create_two($request, $product);
         $product->supports()->sync($support);
         $product->categories()->sync($category);
         return response()->json(['id' => $product->id], 200);
@@ -63,9 +63,9 @@ class ProductController extends Controller
 
     public function store_three(Request $request, $product)
     {
-        $validator = $request->validate([
-            'multi_image' => ['nullable',  'mimes:jpeg,png,jpg,gif,svg'],
-            'multi_image_en' => ['nullable',  'mimes:jpeg,png,jpg,gif,svg'],
+        $request->validate([
+            'multi_image' => ['required'],
+            'multi_image_en' => ['nullable'],
             'content_en' => ['nullable', 'string'],
         ]);
 
@@ -82,8 +82,8 @@ class ProductController extends Controller
     public function store_four(Request $request, $product)
     {
         $request->validate([
-            'video_url' => ['nullable'  , 'mimes:mp4,mov,ogg,qt'],
-            'video_url_en' => ['nullable' ,  'mimes:mp4,mov,ogg,qt'],
+            'video_url' => ['nullable'],
+            'video_url_en' => ['nullable'],
         ]);
         $product = $this->productRepo->getFindId($product);
         $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
@@ -94,7 +94,7 @@ class ProductController extends Controller
 
     public function show($product)
     {
-        return  $product =  $this->productRepo->findSupportId($product);
+        return $product = $this->productRepo->findSupportId($product);
         // dd($product);
         // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
         // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
@@ -127,32 +127,57 @@ class ProductController extends Controller
 
     public function update_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
+
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        $oldImages = $request->oldImages;
-        $basePath = "http://192.168.88.253:8003/images/products/fa/";
-        $relativePathImage = str_replace($basePath, '', $oldImages);
-        if (!empty($relativePathImage)) {
-            $existingImages = Product::query()->where(function ($query) use ($relativePathImage) {
-                foreach ($relativePathImage as $path) {
-                    $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
+        if (!is_null($request->oldImages)) {
+            {
+                $oldImages = $request->oldImages;
+                $basePath = "http://192.168.88.253:8003/images/products/fa/";
+                $relativePathImages = array_map(function ($image) use ($basePath) {
+                    return str_replace($basePath, '', $image);
+                }, $oldImages);
+                if (!empty($relativePathImages)) {
+                    $existingImages = Product::query()->where(function ($query) use ($relativePathImages) {
+                        foreach ($relativePathImages as $path) {
+                            $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
+                        }
+                    })->first();
+                    $existingImages->update([
+                        'multi_image' => $relativePathImages,
+                    ]);
                 }
-            })->first();
-            //            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
-        }
-        $oldVideos = $request->oldVideos;
-        $basePath = "http://192.168.88.253:8003/files/products/fa/";
-        $relativePathVideo = str_replace($basePath, '', $oldVideos);
-        if ($relativePathVideo) {
-            $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
-                foreach ($relativePathVideo as $path) {
-                    $query->orWhere('video_url', 'LIKE', '%' . $path . '%');
-                }
-            })->first();
+            }
+        } else {
+            $product->update([
+                'multi_image_' => null
+            ]);
         }
 
-        //        $productCheckIdVideo = Product::query()->where('id', $existingVideos->id)->update(['video_url' => $relativePathVideo]);
+        if (!is_null($request->oldVideos)) {
+            {
+                $oldVideo = $request->oldVideos;
+                $basePath = "http://192.168.88.253:8003/files/products/fa/";
+                $relativePathVideo = array_map(function ($image) use ($basePath) {
+                    return str_replace($basePath, '', $image);
+                }, $oldVideo);
+                if (!empty($relativePathVideo)) {
+                    $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
+                        foreach ($relativePathVideo as $path) {
+                            $query->orWhere('video_url', 'LIKE', '%' . $path . '%');
+                        }
+                    })->first();
+                    $existingVideos->update([
+                        'video_url' => $relativePathVideo,
+                    ]);
+                }
+            }
+        } else {
+            $product->update([
+                'video_url' => null
+            ]);
+        }
         if ($request->hasFile('multi_image')) {
             if (!empty($product->video_url) > 2) {
                 foreach ($product->multi_image as $oldImage) {
@@ -164,10 +189,10 @@ class ProductController extends Controller
             }
             $multi_image = File::image($request->file('multi_image'));
         }
-        $multi_image = $multi_image ?? $product->multi_image;
+        $multi_image = $multi_image ?? null;
         if ($request->hasFile('video_url')) {
 
-            if (!empty($product->video_url) > 2) {
+            if (!empty($product->video_url)) {
                 foreach ($product->video_url as $oldImage) {
                     if (Storage::delete('files/products/fa/' . $oldImage)) {
                         Storage::delete('files/products/fa/' . $oldImage);
@@ -176,36 +201,70 @@ class ProductController extends Controller
             }
             $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
         }
-        $video_url = $video_url ?? $product->video_url;
+        $video_url = $video_url ?? null;
+
+
+//        dd($multi_image, $video_url, $existingImages, $relativePathVideo);
         $this->productRepo->update_two($request, $product, $multi_image, $video_url, $existingImages, $existingVideos);
         return response()->json(['id' => $product->id], 200);
     }
 
+
     public function update_three(Request $request, $product)
     {
+
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        $oldImages = $request->oldImages_en;
-        $basePath = "http://192.168.88.253:8003/images/products/en/";
-        $relativePathImage = str_replace($basePath, '', $oldImages);
-        if (!empty($relativePathImage)) {
-            $existingImages = Product::query()->where(function ($query) use ($relativePathImage) {
-                foreach ($relativePathImage as $path) {
-                    $query->orWhere('multi_image_en', 'LIKE', '%' . $path . '%');
+        if (!is_null($request->oldImages)) {
+            {
+                $oldImages = $request->oldImages;
+                $basePath = "http://192.168.88.253:8003/images/products/en/";
+                $relativePathImages = array_map(function ($image) use ($basePath) {
+                    return str_replace($basePath, '', $image);
+                }, $oldImages);
+                if (!empty($relativePathImages)) {
+                    $existingImages = Product::query()->where(function ($query) use ($relativePathImages) {
+                        foreach ($relativePathImages as $path) {
+                            $query->orWhere('multi_image_en', 'LIKE', '%' . $path . '%');
+                        }
+                    })->first();
+                    $existingImages->update([
+                        'multi_image_en' => $relativePathImages,
+                    ]);
+                    // foreach ($existingImages as $image) {
+                    //     dd($image);
+                    //     $image->delete();
+                    // }
                 }
-            })->first();
-            //            $productCheckId = Product::query()->where('id', $existingImages->id)->update(['multi_image' => $relativePathImage]);
+            }
+        } else {
+            $product->update([
+                'multi_image_en' => null
+            ]);
         }
-        $oldVideos = $request->oldVideos_en;
-        $basePath = "http://192.168.88.253:8003/files/products/en/";
-        $relativePathVideo = str_replace($basePath, '', $oldVideos);
-        if ($relativePathVideo) {
-            $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
-                foreach ($relativePathVideo as $path) {
-                    $query->orWhere('video_url_en', 'LIKE', '%' . $path . '%');
+        if (!is_null($request->oldVideos)) {
+            {
+                $oldVideo = $request->oldVideos;
+                $basePath = "http://192.168.88.253:8003/files/products/en/";
+                $relativePathVideo = array_map(function ($image) use ($basePath) {
+                    return str_replace($basePath, '', $image);
+                }, $oldVideo);
+                if (!empty($relativePathVideo)) {
+                    $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
+                        foreach ($relativePathVideo as $path) {
+                            $query->orWhere('video_url_en', 'LIKE', '%' . $path . '%');
+                        }
+                    })->first();
+                    $existingVideos->update([
+                        'video_url_en' => $relativePathVideo,
+                    ]);
                 }
-            })->first();
+            }
+        } else {
+            $product->update([
+                'video_url_en' => null
+            ]);
         }
 
         if ($request->hasFile('multi_image_en')) {
@@ -219,7 +278,8 @@ class ProductController extends Controller
             }
             $multi_image_en = $request->multi_image_en ? File::image_en($request->file('multi_image_en')) : null;
         }
-        $multi_image_en = $multi_image_en ?? $product->multi_image_en;
+
+        $multi_image_en = $multi_image_en ?? null;
 
 
         if ($request->hasFile('video_url_en')) {
@@ -232,11 +292,15 @@ class ProductController extends Controller
             }
             $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
         }
-        $video_url_en = $video_url_en ?? $product->video_url_en;
+        $video_url_en = $video_url_en ?? null;
+
 
         $this->productRepo->update_three($request, $product, $multi_image_en, $video_url_en, $existingImages, $existingVideos);
+
         return response()->json(['id' => $product->id], 200);
     }
+
+
     public function destroy($product)
     {
         $product = $this->productRepo->getFindId($product);
@@ -284,7 +348,7 @@ class ProductController extends Controller
     public function price_status_disable($id, $status)
     {
         $products = $this->productRepo->getFindProducts($id);
-        if (is_null($products))  return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
+        if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
 
         if ($status == "1") {
             $this->productRepo->status($id, Product::STATUS_PRICE_ANSIBLE);

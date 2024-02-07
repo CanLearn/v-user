@@ -18,7 +18,8 @@ class Mainlanding extends Model
         'content',
         'content_en',
     ];
-    protected $appends = ['images' ]; // نام صحیح برای متغیرها
+    protected $hidden = ['image'];
+    protected $appends = ['images'];
     public function getImagesAttribute()
     {
         return asset('images/image_main_landing/' . $this->image);
