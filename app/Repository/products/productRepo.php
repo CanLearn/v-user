@@ -153,6 +153,7 @@ class productRepo
 
     public function update_three($value, $product, $multi_image, $video_url, $oldImage, $oldVideo)
     {
+
         // dd( $multi_image  , $video_url, $oldImage, $oldVideo);
         $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
         $oldImageJson = !empty($oldImage->multi_image_en) ? json_encode($oldImage->multi_image_en) : null;
