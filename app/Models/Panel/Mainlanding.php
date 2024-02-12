@@ -25,4 +25,6 @@ class Mainlanding extends Model
         return asset('images/image_main_landing/' . $this->image);
     }
 
+    
+
 }

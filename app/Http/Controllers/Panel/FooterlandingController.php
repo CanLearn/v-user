@@ -29,6 +29,13 @@ class FooterlandingController extends Controller
             'yahoo' => ['nullable', 'string'],
             'gmail' => ['nullable', 'string'],
             'whatsapp' => ['nullable', 'string'],
+            'address_en'=> ['nullable' , 'string'],
+            'phone_en'=> ['nullable' , 'string'],
+            'number_whatsapp_en'=> ['nullable' , 'string'],
+            'telegram_en'=> ['nullable' , 'string'],
+            'yahoo_en'=> ['nullable' , 'string'],
+            'gmail_en'=> ['nullable' , 'string'],
+            'whatsapp_en'=> ['nullable' , 'string'],
         ]);
         $this->footerRepo->create($request);
         return response()->json(['message' => 'success created footer', 'status' => 'success'], 200);
@@ -43,17 +50,41 @@ class FooterlandingController extends Controller
 
     public function update(Request $request, $footerlanding)
     {
-        $request->validate([
-            'address' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string'],
-            'number_whatsapp' => ['nullable', 'string'],
-            'telegram' => ['nullable', 'string'],
-            'yahoo' => ['nullable', 'string'],
-            'gmail' => ['nullable', 'string'],
-            'whatsapp' => ['nullable', 'string'],
-
-        ]);
-        $this->footerRepo->update($request , $footerlanding);
+        if( $request->isMethod('post' && 'PUT')) {
+            $request->validate([
+                'address' => ['nullable', 'string'],
+                'phone' => ['nullable', 'string'],
+                'number_whatsapp' => ['nullable', 'string'],
+                'telegram' => ['nullable', 'string'],
+                'yahoo' => ['nullable', 'string'],
+                'gmail' => ['nullable', 'string'],
+                'whatsapp' => ['nullable', 'string'],
+                'address_en'=> ['nullable' , 'string'],
+                'phone_en'=> ['nullable' , 'string'],
+                'number_whatsapp_en'=> ['nullable' , 'string'],
+                'telegram_en'=> ['nullable' , 'string'],
+                'yahoo_en'=> ['nullable' , 'string'],
+                'gmail_en'=> ['nullable' , 'string'],
+                'whatsapp_en'=> ['nullable' , 'string'],
+            ]);
+        }
+        // $request->validate([
+        //     'address' => ['nullable', 'string'],
+        //     'phone' => ['nullable', 'string'],
+        //     'number_whatsapp' => ['nullable', 'string'],
+        //     'telegram' => ['nullable', 'string'],
+        //     'yahoo' => ['nullable', 'string'],
+        //     'gmail' => ['nullable', 'string'],
+        //     'whatsapp' => ['nullable', 'string'],
+        //     'address_en'=> ['nullable' , 'string'],
+        //     'phone_en'=> ['nullable' , 'string'],
+        //     'number_whatsapp_en'=> ['nullable' , 'string'],
+        //     'telegram_en'=> ['nullable' , 'string'],
+        //     'yahoo_en'=> ['nullable' , 'string'],
+        //     'gmail_en'=> ['nullable' , 'string'],
+        //     'whatsapp_en'=> ['nullable' , 'string'],
+        // ]);
+        $this->footerRepo->update($request, $footerlanding);
         return response()->json(['message' => 'success created footer', 'status' => 'success'], 200);
 
     }

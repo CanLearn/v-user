@@ -153,7 +153,6 @@ class productRepo
 
     public function update_three($value, $product, $multi_image, $video_url, $oldImage, $oldVideo)
     {
-
         // dd( $multi_image  , $video_url, $oldImage, $oldVideo);
         $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
         $oldImageJson = !empty($oldImage->multi_image_en) ? json_encode($oldImage->multi_image_en) : null;
@@ -165,7 +164,6 @@ class productRepo
         } elseif (!empty($multi_image) && empty($oldImageJson)) {
             $mergedImagesArray = $multi_image;
         }
-
         $oldVideoJson = !empty($oldVideo->video_url_en) ? json_encode($oldVideo->video_url_en) : null;
         $mergedVideoArray = null;
 
@@ -184,7 +182,6 @@ class productRepo
             'multi_image_en' => $mergedImages,
             'video_url_en' => $mergedVideos,
         ]);
-
     }
 
     public function status($id, $status)

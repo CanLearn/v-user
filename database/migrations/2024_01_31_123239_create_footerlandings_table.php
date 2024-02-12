@@ -20,6 +20,13 @@ return new class extends Migration
             $table->string('yahoo')->nullable();
             $table->string('gmail')->nullable();
             $table->string('whatsapp')->nullable();
+            $table->string('address_en')->nullable();
+            $table->string('phone_en')->nullable();
+            $table->string('number_whatsapp_en');
+            $table->string('telegram_en')->nullable();
+            $table->string('yahoo_en')->nullable();
+            $table->string('gmail_en')->nullable();
+            $table->string('whatsapp_en')->nullable();
             $table->timestamps();
         });
     }
