@@ -83,6 +83,7 @@ class footerRepo
 
     public function getFindEn()
     {
+        
         return Footerlanding::query()->select([
             'address_en',
             'phone_en',
