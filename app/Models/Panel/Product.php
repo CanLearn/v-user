@@ -15,6 +15,7 @@ class Product extends Model
 
     protected $fillable = [
         'title',
+        'is_default',
         'title_en',
         'slug',
         'slug_en',
@@ -31,13 +32,13 @@ class Product extends Model
         'status_price',
         'user_id' ,
     ];
-//     protected $hidden = [
-//         'multi_image_en' ,
-//         'multi_image' ,
-//         'video_url' ,
+     protected $hidden = [
+         'multi_image_en' ,
+         'multi_image' ,
+         'video_url' ,
 //         'video_url_en' ,
-// //        'status_price' ,
-//     ];
+         'status_price' ,
+     ];
         public function sluggable(): array
     {
         return [
@@ -47,6 +48,7 @@ class Product extends Model
         ];
     }
     protected $casts = [
+        'is_default' => 'boolean',
         'multi_image' => 'json',
         'multi_image_en'=> 'json',
         'video_url'=> 'json',

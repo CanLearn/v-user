@@ -20,34 +20,66 @@ class LandingController extends Controller
         $footerRepo = $footerRepo->getAllLanding();
 
         return [
-            'mainRepo' =>  $mainRepo,
-            'videoRepo' =>  $videoRepo,
-            'imageRepo' =>   $imageRepo,
-            'footerRepo' =>  $footerRepo,
+            'mainRepo' => $mainRepo,
+            'videoRepo' => $videoRepo,
+            'imageRepo' => $imageRepo,
+            'footerRepo' => $footerRepo,
         ];
     }
 
-    public function category_product($slug,  categoryRepo $categoryRepo)
+    public function category_product_en($slug, categoryRepo $categoryRepo)
     {
         $category = $categoryRepo->getFindSlug($slug);
-        // $category = Category::query()->where('slug_en' , $slug )->first() ;
+        $products = $category->load(['products' => function ($q) {
+            $q->where('is_default', 1)
+                ->select([
+                    'title_en',
+                    'slug_en',
+                    'summary_en',
+                    'content_en',
+                    'price_en',
+                ])
+                ->first();
+        }]);
 
-        dd($category->products);
-        return 'asas';
+        return $products;
+
     }
+
+    public function category_product_fa($slug, categoryRepo $categoryRepo)
+    {
+        $category = $categoryRepo->getFindSlug($slug);
+        $products = $category->load(['products' => function ($q) {
+            $q->where('is_default', 1)
+                ->select([
+                    'title',
+                    'slug',
+                    'summary',
+                    'content',
+                    'price',
+                ])
+                ->first();
+        }]);
+
+        return $products;
+
+    }
+
     public function categoriesEn(categoryRepo $categoryRepo)
     {
-        return  $category = $categoryRepo->getFindPesaon();
+        return $category = $categoryRepo->getFindPesaon();
     }
+
     public function categoriesFa(categoryRepo $categoryRepo)
     {
-        return  $category = $categoryRepo->getFindPesaonEn();
+        return $category = $categoryRepo->getFindPesaonEn();
     }
 
     public function headerEn(mainRepo $mainRepo)
     {
         return $main = $mainRepo->getFindEn();
     }
+
     public function headerFa(mainRepo $mainRepo)
     {
         return $main = $mainRepo->getFindPersaon();
@@ -73,13 +105,13 @@ class LandingController extends Controller
         return $image = $imageRepo->getFindFa();
     }
 
-    public function footerEn( footerRepo $footerRepo)
+    public function footerEn(footerRepo $footerRepo)
     {
-        return $footer = $footerRepo->getFindEn() ;
+        return $footer = $footerRepo->getFindEn();
     }
 
-    public function footerFa( footerRepo $footerRepo)
+    public function footerFa(footerRepo $footerRepo)
     {
-        return $footer = $footerRepo->getFindFa() ;
+        return $footer = $footerRepo->getFindFa();
     }
 }

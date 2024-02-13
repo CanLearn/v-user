@@ -65,5 +65,7 @@ Route::name('front.')->group(function() {
     Route::get('footer/en', [LandingController::class, 'footerEn'])->name('footerEn');
     Route::get('footer/fa', [LandingController::class, 'footerFa'])->name('footerFa');
 
-    Route::get('/category-product/{slug}', [LandingController::class, 'category_product'])->name('category-product');
+    Route::get('/category-product/en/{slug}', [LandingController::class, 'category_product_en'])->name('category-product-en');
+    Route::get('/category-product/fa/{slug}', [LandingController::class, 'category_product_fa'])->name('category-product-fa');
+
 });

@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->longText('multi_image_en')->nullable();
             $table->longText('video_url')->nullable();
             $table->longText('video_url_en')->nullable();
+            $table->boolean('is_default')->default(0);
             $table->unsignedBigInteger('price')->nullable();
             $table->unsignedBigInteger('price_en')->nullable();
             $table->enum('status_price', \App\Models\Panel\Product::$status_price);
