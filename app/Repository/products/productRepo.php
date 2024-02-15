@@ -19,7 +19,11 @@ class productRepo
 
     public function index()
     {
-        return $this->query->orderByDesc('created_at')->paginate();
+        return $this->query->with(['categories' => function ($query) {
+            $query->select('title'); // انتخاب فیلدهای لازم از دسته‌بندی‌ها
+        }])
+            ->orderByDesc('created_at')
+            ->paginate();
     }
 
     public function create_one($value)
@@ -199,5 +203,10 @@ class productRepo
     public function getFindProducts($id)
     {
         return Product::query()->where('id', $id)->first();
+    }
+
+    public function isDefault($id, $number)
+    {
+        return Product::query()->where('id', $id)->update(['is_default' => $number]);
     }
 }
