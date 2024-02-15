@@ -37,7 +37,7 @@ class Product extends Model
          'multi_image' ,
          'video_url' ,
 //         'video_url_en' ,
-         'status_price' ,
+        //  'status_price' ,
      ];
         public function sluggable(): array
     {

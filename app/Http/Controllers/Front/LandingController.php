@@ -38,18 +38,19 @@ class LandingController extends Controller
                     'summary_en',
                     'content_en',
                     'price_en',
+                    'multi_image_en',
+                    'video_url_en',
                 ])
                 ->first();
         }]);
 
         return $products;
-
     }
 
     public function category_product_fa($slug, categoryRepo $categoryRepo)
     {
         $category = $categoryRepo->getFindSlug($slug);
-        $products = $category->load(['products' => function ($q) {
+        $products =  $category->load(['products' => function ($q) {
             $q->where('is_default', 1)
                 ->select([
                     'title',
@@ -57,12 +58,13 @@ class LandingController extends Controller
                     'summary',
                     'content',
                     'price',
+                    'multi_image',
+                    'video_url',
                 ])
                 ->first();
         }]);
 
         return $products;
-
     }
 
     public function categoriesEn(categoryRepo $categoryRepo)
@@ -113,5 +115,43 @@ class LandingController extends Controller
     public function footerFa(footerRepo $footerRepo)
     {
         return $footer = $footerRepo->getFindFa();
+    }
+
+    public function category_product_main_en($slug, categoryRepo $categoryRepo)
+    {
+        $products = $categoryRepo->getFindSlug($slug)
+        ->products()
+        ->where('is_default', 0)
+        ->select([
+            'title_en',
+            'slug_en',
+            'summary_en',
+            'content_en',
+            'price_en',
+            'multi_image_en',
+            'video_url_en',
+        ])
+        ->get();
+
+    return $products;
+    }
+
+    public  function category_product_main_fa($slug, categoryRepo $categoryRepo)
+    {
+        $products = $categoryRepo->getFindSlug($slug)
+            ->products()
+            ->where('is_default', 0)
+            ->select([
+                'title',
+                'slug',
+                'summary',
+                'content',
+                'price',
+                'multi_image',
+                'video_url',
+            ])
+            ->get();
+
+        return $products;
     }
 }

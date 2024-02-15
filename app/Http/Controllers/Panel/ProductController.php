@@ -362,4 +362,22 @@ class ProductController extends Controller
             }
         }
     }
+
+    public function is_default($id, $status)
+    {
+        $products = $this->productRepo->getFindProducts($id);
+        if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
+
+        if ($status == "1") {
+            $this->productRepo->isDefault($id , 1);
+            return response()->json(["status" => "success", 'message' => "success change status enable in default"], 200);
+        } else {
+            if ($status == "0") {
+                $this->productRepo->isDefault($id , 0 );
+                return response()->json(["status" => "success", 'message' => "success change status disable in default"], 200);
+            } else {
+                return response()->json(["status" => "failed", 'message' => "failed"], 405);
+            }
+        }
+    }
 }

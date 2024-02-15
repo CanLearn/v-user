@@ -47,12 +47,21 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
     Route::put('products/update_four/{product}', [ProductController::class, 'update_four'])->name('products.update_four');
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('category-parent', [CategoryController::class, 'parent'])->name('parent');
+
+
+    Route::put('products-is-default/{product}/as/{status}', [ProductController::class, 'is_default'])->name('products-is-default');
+
 });
 
 Route::name('front.')->group(function() {
     // Route::get('/fa/', [LandingController::class, 'index'])->name('index');
     Route::get('categories/en', [LandingController::class, 'categoriesEn'])->name('categoriesEn');
     Route::get('categories/fa', [LandingController::class, 'categoriesFa'])->name('categoriesFa');
+
+    Route::get('category-product-main/en/{slug}', [LandingController::class, 'category_product_main_en'])->name('category-product-main-en');
+    Route::get('category-product-main/fa/{slug}', [LandingController::class, 'category_product_main_fa'])->name('category-product-main-fa');
+
+
     Route::get('headers/en', [LandingController::class, 'headerEn'])->name('headerEn');
     Route::get('headers/fa', [LandingController::class, 'headerFa'])->name('headerFa');
 
@@ -69,3 +78,4 @@ Route::name('front.')->group(function() {
     Route::get('/category-product/fa/{slug}', [LandingController::class, 'category_product_fa'])->name('category-product-fa');
 
 });
+

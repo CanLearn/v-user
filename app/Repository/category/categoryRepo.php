@@ -90,6 +90,7 @@ class categoryRepo
         return Category::query()->select([
             'title',
             'slug',
+            'slug_en',
         ])->get();
     }
 }
