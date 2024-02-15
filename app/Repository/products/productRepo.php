@@ -20,10 +20,11 @@ class productRepo
     public function index()
     {
         return $this->query->with(['categories' => function ($query) {
-            $query->select('title'); // انتخاب فیلدهای لازم از دسته‌بندی‌ها
+            $query->select('title');
         }])
             ->orderByDesc('created_at')
             ->paginate();
+
     }
 
     public function create_one($value)
