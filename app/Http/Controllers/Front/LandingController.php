@@ -43,7 +43,6 @@ class LandingController extends Controller
                 ])
                 ->first();
         }]);
-
         return $products;
     }
 
