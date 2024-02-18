@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
+
     public function index(mainRepo $mainRepo, videoRepo $videoRepo, imageRepo $imageRepo, footerRepo $footerRepo)
     {
         $mainRepo = $mainRepo->getAllLanding();
@@ -67,6 +68,45 @@ class LandingController extends Controller
         return $products;
     }
 
+    public function bank_data_product_en($slug, bankRepo $bankRepo)
+    {
+        $category = $bankRepo->getFindSlug($slug);
+        $products =  $category->load(['products' => function ($q) {
+            $q->where('is_default', 1)
+                ->select([
+                    'title',
+                    'slug',
+                    'summary',
+                    'content',
+                    'price',
+                    'multi_image',
+                    'video_url',
+                ])
+                ->first();
+        }]);
+
+        return $products;
+    }
+
+    public function bank_data_product_fa($slug, bankRepo $bankRepo)
+    {
+        $category = $bankRepo->getFindSlug($slug);
+        $products =  $category->load(['products' => function ($q) {
+            $q->where('is_default', 1)
+                ->select([
+                    'title',
+                    'slug',
+                    'summary',
+                    'content',
+                    'price',
+                    'multi_image',
+                    'video_url',
+                ])
+                ->first();
+        }]);
+
+        return $products;
+    }
     public function categoriesEn(categoryRepo $categoryRepo)
     {
         return $category = $categoryRepo->getFindPesaon();

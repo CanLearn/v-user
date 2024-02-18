@@ -67,6 +67,10 @@ class Product extends Model
     {
         return $this->belongsToMany(Category::class , 'category_product');
     }
+    public function banks():BelongsToMany
+    {
+        return $this->belongsToMany(BankData::class , 'bank_data_product');
+    }
     public function supports():BelongsToMany
     {
         return $this->belongsToMany(Support::class , 'support_products');

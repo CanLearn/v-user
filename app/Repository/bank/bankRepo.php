@@ -3,6 +3,7 @@
 namespace App\Repository\bank;
 
 use App\Models\Panel\BankData;
+use App\Models\Panel\Support;
 use App\Models\User;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Str;
@@ -92,5 +93,10 @@ class bankRepo
             'slug',
             'slug_en',
         ])->get();
+    }
+    public function getMultiId( $support_id)
+    {
+        $support_ids = explode(',', $support_id);
+        return  BankData::query()->whereIn('id', $support_ids)->get()->pluck('id')->toArray();
     }
 }

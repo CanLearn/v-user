@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Panel\Product;
+use App\Repository\bank\bankRepo;
 use App\Repository\category\categoryRepo;
 use App\Repository\products\productRepo;
 use App\Repository\supportRepo\supportRepo;
@@ -42,22 +43,24 @@ class ProductController extends Controller
         return response()->json(['id' => $products->id], 200);
     }
 
-    public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
+    public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo , bankRepo $bankRepo)
     {
         $request->validate([
             'category_id' => ['required'],
             'support_id' => ['required'],
-            'price' => ['nullable', 'string'],
-            'price_en' => ['nullable', 'string'],
+            'bank_data_id' => ['nullable'],
+            'price' => ['nullable'],
+            'price_en' => ['nullable'],
             'content' => ['nullable', 'string'],
         ]);
         $product = $this->productRepo->getFindId($product);
-
         $category = $categoryRepo->getFindById($request->category_id);
+        $banks = $bankRepo->getMultiId($request->bank_data_id);
         $support = $supportRepo->getMultiId($request->support_id);
         $this->productRepo->create_two($request, $product);
         $product->supports()->sync($support);
         $product->categories()->sync($category);
+        $product->banks()->sync($banks);
         return response()->json(['id' => $product->id], 200);
     }
 
@@ -103,24 +106,30 @@ class ProductController extends Controller
     }
 
 
-    public function update_one(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
+    public function update_one(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo  , bankRepo $bankRepo)
     {
         $request->validate([
+            'bank_data_id' => ['nullable'],
             'category_id' => ['required'],
             'support_id' => ['required'],
             'title' => ['nullable', 'string'],
             'title_en' => ['nullable', 'string'],
             'summary' => ['nullable', 'string'],
-            'price' => ['nullable', 'string'],
-            'price_en' => ['nullable', 'string'],
+            'price' => ['nullable'],
+            'price_en' => ['nullable'],
         ]);
+        $banks = $bankRepo->getFindById($request->bank_data_id);
         $productId = $this->productRepo->getFindId($product);
         $category = $categoryRepo->getById($request->category_id);
         $support = $supportRepo->getMultiId($request->support_id);
         $this->productRepo->update_one($request, $productId);
+        $productId->supports()->detach();
         $productId->supports()->sync($support);
         $productId->categories()->detach();
         $productId->categories()->attach($category);
+
+        $productId->banks()->detach();
+        $productId->banks()->sync($banks);
         return response()->json(['id' => $productId->id], 200);
     }
 
