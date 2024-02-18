@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Repository\bank\bankRepo;
 use App\Repository\category\categoryRepo;
 use App\Repository\footer\footerRepo;
 use App\Repository\images\imageRepo;
@@ -75,6 +76,19 @@ class LandingController extends Controller
     {
         return $category = $categoryRepo->getFindPesaonEn();
     }
+
+
+    public function bankdata_en(bankRepo $bankRepo)
+    {
+        return $banks = $bankRepo->getFindPesaon();
+    }
+
+    public function bankdata_fa(bankRepo $bankRepo)
+    {
+        return $banks = $bankRepo->getFindPesaonEn();
+    }
+
+
 
     public function headerEn(mainRepo $mainRepo)
     {

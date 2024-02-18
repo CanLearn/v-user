@@ -4,10 +4,12 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Front\LandingController;
+use App\Http\Controllers\Panel\BankDataController;
 use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\ProfileController;
 use App\Http\Controllers\Panel\SupportController;
+use App\Models\Panel\BankData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
     Route::resource('categories', CategoryController::class);
+    Route::resource('databanks', BankDataController::class);
+
     Route::resource('video-landing', \App\Http\Controllers\Panel\VideolandingController::class);
     Route::resource('image-landing', \App\Http\Controllers\Panel\ImagelandingController::class);
     Route::resource('main-landing', \App\Http\Controllers\Panel\MainlandingController::class);
@@ -38,7 +42,13 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
     Route::put('products/store_three/{product}', [ProductController::class, 'store_three'])->name('products.store_three');
     Route::put('products/store_four/{product}', [ProductController::class, 'store_four'])->name('products.store_four');
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+
+
     Route::get('category-parent', [CategoryController::class, 'parent'])->name('parent');
+    Route::get('bankdata-parent', [BankDataController::class, 'parent'])->name('parent');
+
+
+
     Route::put('products-status-price/{product}/as/{status}', [ProductController::class, 'price_status_disable'])->name('products-status-disable-price');
 
     Route::put('products/update_one/{product}', [ProductController::class, 'update_one'])->name('products.update_one');
@@ -46,7 +56,7 @@ Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(functio
     Route::put('products/update_three/{product}', [ProductController::class, 'update_three'])->name('products.update_three');
     Route::put('products/update_four/{product}', [ProductController::class, 'update_four'])->name('products.update_four');
     Route::put('profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::get('category-parent', [CategoryController::class, 'parent'])->name('parent');
+
 
 
     Route::put('products-is-default/{product}/as/{status}', [ProductController::class, 'is_default'])->name('products-is-default');
@@ -57,6 +67,9 @@ Route::name('front.')->group(function() {
     // Route::get('/fa/', [LandingController::class, 'index'])->name('index');
     Route::get('categories/en', [LandingController::class, 'categoriesEn'])->name('categoriesEn');
     Route::get('categories/fa', [LandingController::class, 'categoriesFa'])->name('categoriesFa');
+
+    Route::get('bankdata/en', [LandingController::class, 'bankdata_en'])->name('bankdata_en');
+    Route::get('bankdata/fa', [LandingController::class, 'bankdata_fa'])->name('bankdata_fa');
 
     Route::get('category-product-main/en/{slug}', [LandingController::class, 'category_product_main_en'])->name('category-product-main-en');
     Route::get('category-product-main/fa/{slug}', [LandingController::class, 'category_product_main_fa'])->name('category-product-main-fa');
