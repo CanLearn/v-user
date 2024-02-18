@@ -44,5 +44,10 @@ class BankData extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function products()
+    {
+        return $this->belongsToMany(Product::class , 'bank_data_product');
+    }
+
 
 }
