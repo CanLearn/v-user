@@ -70,8 +70,8 @@ class LandingController extends Controller
 
     public function bank_data_product_en($slug, bankRepo $bankRepo)
     {
-        $category = $bankRepo->getFindSlug($slug);
-        $products =  $category->load(['products' => function ($q) {
+        $bank = $bankRepo->getFindSlug($slug);
+        $products =  $bank->load(['products' => function ($q) {
             $q->where('is_default', 1)
                 ->select([
                     'title',
@@ -84,7 +84,6 @@ class LandingController extends Controller
                 ])
                 ->first();
         }]);
-
         return $products;
     }
 
@@ -192,6 +191,44 @@ class LandingController extends Controller
     public  function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
         $products = $categoryRepo->getFindSlug($slug)
+            ->products()
+            ->where('is_default', 0)
+            ->select([
+                'title',
+                'slug',
+                'summary',
+                'content',
+                'price',
+                'multi_image',
+                'video_url',
+            ])
+            ->get();
+
+        return $products;
+    }
+
+    public  function bank_data_product_main_fa($slug, bankRepo $bankRepo)
+    {
+        $products = $categoryRepo->getFindSlug($slug)
+            ->products()
+            ->where('is_default', 0)
+            ->select([
+                'title',
+                'slug',
+                'summary',
+                'content',
+                'price',
+                'multi_image',
+                'video_url',
+            ])
+            ->get();
+
+        return $products;
+    }
+
+    public  function bank_data_product_main_en($slug, bankRepo $bankRepo)
+    {
+        $products = $bankRepo->getFindSlug($slug)
             ->products()
             ->where('is_default', 0)
             ->select([
