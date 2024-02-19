@@ -74,13 +74,13 @@ class LandingController extends Controller
         $products =  $bank->load(['products' => function ($q) {
             $q->where('is_default', 1)
                 ->select([
-                    'title',
-                    'slug',
-                    'summary',
-                    'content',
-                    'price',
-                    'multi_image',
-                    'video_url',
+                    'title_en',
+                    'slug_en',
+                    'summary_en',
+                    'content_en',
+                    'price_en',
+                    'multi_image_en',
+                    'video_url_en',
                 ])
                 ->first();
         }]);
@@ -172,20 +172,20 @@ class LandingController extends Controller
     public function category_product_main_en($slug, categoryRepo $categoryRepo)
     {
         $products = $categoryRepo->getFindSlug($slug)
-        ->products()
-        ->where('is_default', 0)
-        ->select([
-            'title_en',
-            'slug_en',
-            'summary_en',
-            'content_en',
-            'price_en',
-            'multi_image_en',
-            'video_url_en',
-        ])
-        ->get();
+            ->products()
+            ->where('is_default', 0)
+            ->select([
+                'title_en',
+                'slug_en',
+                'summary_en',
+                'content_en',
+                'price_en',
+                'multi_image_en',
+                'video_url_en',
+            ])
+            ->get();
 
-    return $products;
+        return $products;
     }
 
     public  function category_product_main_fa($slug, categoryRepo $categoryRepo)
@@ -209,7 +209,7 @@ class LandingController extends Controller
 
     public  function bank_data_product_main_fa($slug, bankRepo $bankRepo)
     {
-        $products = $categoryRepo->getFindSlug($slug)
+        $products = $bankRepo->getFindSlug($slug)
             ->products()
             ->where('is_default', 0)
             ->select([
@@ -232,16 +232,15 @@ class LandingController extends Controller
             ->products()
             ->where('is_default', 0)
             ->select([
-                'title',
-                'slug',
-                'summary',
-                'content',
-                'price',
-                'multi_image',
-                'video_url',
+                'title_en',
+                'slug_en',
+                'summary_en',
+                'content_en',
+                'price_en',
+                'multi_image_en',
+                'video_url_en',
             ])
             ->get();
-
         return $products;
     }
 }

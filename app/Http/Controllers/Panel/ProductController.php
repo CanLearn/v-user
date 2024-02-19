@@ -143,7 +143,7 @@ class ProductController extends Controller
         if (!is_null($request->oldImages)) {
             {
                 $oldImages = $request->oldImages;
-                $basePath = "http://192.168.88.253:8003/images/products/fa/";
+                $basePath = "http://tback.chaleshsoft.com/images/products/fa/";
                 $relativePathImages = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldImages);
@@ -167,7 +167,7 @@ class ProductController extends Controller
         if (!is_null($request->oldVideos)) {
             {
                 $oldVideo = $request->oldVideos;
-                $basePath = "http://192.168.88.253:8003/files/products/fa/";
+                $basePath = "http://tback.chaleshsoft.com/files/products/fa/";
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldVideo);
@@ -228,7 +228,7 @@ class ProductController extends Controller
         if (!is_null($request->oldImages)) {
             {
                 $oldImages = $request->oldImages;
-                $basePath = "http://192.168.88.253:8003/images/products/en/";
+                $basePath = "http://tback.chaleshsoft.com/images/products/en/";
                 $relativePathImages = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldImages);
@@ -255,7 +255,7 @@ class ProductController extends Controller
         if (!is_null($request->oldVideos)) {
             {
                 $oldVideo = $request->oldVideos;
-                $basePath = "http://192.168.88.253:8003/files/products/en/";
+                $basePath = "http://tback.chaleshsoft.com/files/products/en/";
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldVideo);
