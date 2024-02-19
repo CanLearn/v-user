@@ -143,7 +143,7 @@ class ProductController extends Controller
         if (!is_null($request->oldImages)) {
             {
                 $oldImages = $request->oldImages;
-                $basePath = "http://tback.chaleshsoft.com/images/products/fa/";
+                $basePath = env('IMAGE_FA');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldImages);
@@ -167,7 +167,7 @@ class ProductController extends Controller
         if (!is_null($request->oldVideos)) {
             {
                 $oldVideo = $request->oldVideos;
-                $basePath = "http://tback.chaleshsoft.com/files/products/fa/";
+                $basePath = env('FILE_FA');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldVideo);
@@ -228,7 +228,7 @@ class ProductController extends Controller
         if (!is_null($request->oldImages)) {
             {
                 $oldImages = $request->oldImages;
-                $basePath = "http://tback.chaleshsoft.com/images/products/en/";
+                $basePath = env('IMAGE_EN');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldImages);
@@ -255,7 +255,7 @@ class ProductController extends Controller
         if (!is_null($request->oldVideos)) {
             {
                 $oldVideo = $request->oldVideos;
-                $basePath = "http://tback.chaleshsoft.com/files/products/en/";
+                $basePath = env('FILE_EN');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
                     return str_replace($basePath, '', $image);
                 }, $oldVideo);
