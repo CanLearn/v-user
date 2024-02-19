@@ -20,7 +20,6 @@ class BankData extends Model
         'parent_id',
         'user_id',
     ];
-
     public function sluggable(): array
     {
         return [
