@@ -82,6 +82,7 @@ class productRepo
                 $q->select(['id', 'title'])->get();
             }
         ])->first();
+
     }
 
     // public function update($value, $id, $multi_image, $multi_image_en, $video_url, $video_url_en, $category)
