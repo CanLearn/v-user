@@ -151,9 +151,12 @@ class ProductController extends Controller
                 if (!empty($relativePathImages)) {
                     $existingImages = Product::query()->where(function ($query) use ($relativePathImages) {
                         foreach ($relativePathImages as $path) {
-                            $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
+//                            dd($query->where('multi_image', 'LIKE', '%' . $path . '%')->get());
+                          $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
                         }
                     })->first();
+//                    dd($relativePathImages , $existingImages);
+
                     $existingImages->update([
                         'multi_image' => $relativePathImages,
                     ]);
