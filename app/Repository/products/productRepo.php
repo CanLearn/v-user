@@ -24,7 +24,6 @@ class productRepo
         }])
             ->orderByDesc('created_at')
             ->paginate();
-
     }
 
     public function create_one($value)
@@ -73,9 +72,16 @@ class productRepo
 
     public function findSupportId($id)
     {
-        return $this->query->where('id', $id)->with(['supports' => function ($q) {
-            $q->select(['id', 'title'])->get();
-        }])->first();
+        return $this->query->where('id', $id)->with([
+            'banks' => function ($q) {
+                $q->select(['id', 'title'])->get();
+            },
+            'categories' => function ($q) {
+                $q->select(['id', 'title'])->get();
+            }, 'supports' => function ($q) {
+                $q->select(['id', 'title'])->get();
+            }
+        ])->first();
     }
 
     // public function update($value, $id, $multi_image, $multi_image_en, $video_url, $video_url_en, $category)

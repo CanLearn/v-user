@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,12 +24,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        return [
+        return User::create([
             'name' => 'root',
             'email' => 'root@yahoo.com',
-            'password' => static::$password ??= Hash::make('123456789'),
-            'remember_token' => Str::random(10),
-        ];
+            'password' => \Illuminate\Support\Facades\Hash::make('123456789'),
+            'remember_token' => \Illuminate\Support\Str::random(10),
+        ]);
+
     }
 
     /**

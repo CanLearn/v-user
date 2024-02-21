@@ -13,6 +13,7 @@ use App\Repository\supportRepo\supportRepo;
 use App\Services\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use function Symfony\Component\VarDumper\Dumper\esc;
@@ -46,7 +47,7 @@ class ProductController extends Controller
     public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo , bankRepo $bankRepo)
     {
         $request->validate([
-            'category_id' => ['required'],
+            'category_id' => ['nullable'],
             'support_id' => ['required'],
             'bank_data_id' => ['nullable'],
             'price' => ['nullable'],
@@ -54,8 +55,8 @@ class ProductController extends Controller
             'content' => ['nullable', 'string'],
         ]);
         $product = $this->productRepo->getFindId($product);
-        $category = $categoryRepo->getFindById($request->category_id);
-        $banks = $bankRepo->getMultiId($request->bank_data_id);
+        $category = $categoryRepo->getFindById($request->category_id) ?? null;
+        $banks = $bankRepo->getMultiId($request->bank_data_id) ?? null;
         $support = $supportRepo->getMultiId($request->support_id);
         $this->productRepo->create_two($request, $product);
         $product->supports()->sync($support);
