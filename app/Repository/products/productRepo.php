@@ -84,7 +84,6 @@ class productRepo
         ])->first();
     }
 
-
     // public function update($value, $id, $multi_image, $multi_image_en, $video_url, $video_url_en, $category)
     // {
     //     return $this->query->where('id', $id->id)->update([
