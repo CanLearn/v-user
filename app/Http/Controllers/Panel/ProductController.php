@@ -44,7 +44,7 @@ class ProductController extends Controller
         return response()->json(['id' => $products->id], 200);
     }
 
-    public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo , bankRepo $bankRepo)
+    public function store_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo, bankRepo $bankRepo)
     {
         $request->validate([
             'category_id' => ['nullable'],
@@ -59,9 +59,15 @@ class ProductController extends Controller
         $banks = $bankRepo->getMultiId($request->bank_data_id) ?? null;
         $support = $supportRepo->getMultiId($request->support_id);
         $this->productRepo->create_two($request, $product);
-        $product->supports()->sync($support);
-        $product->categories()->sync($category);
-        $product->banks()->sync($banks);
+        if (!is_null($support)) {
+            $product->supports()->sync($support);
+        }
+        if (!is_null($category)) {
+            $product->categories()->sync($category);
+        }
+        if (!is_null($banks)) {
+            $product->banks()->sync($banks);
+        }
         return response()->json(['id' => $product->id], 200);
     }
 
@@ -107,30 +113,42 @@ class ProductController extends Controller
     }
 
 
-    public function update_one(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo  , bankRepo $bankRepo)
+    public function update_one(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo, bankRepo $bankRepo)
     {
+
         $request->validate([
             'bank_data_id' => ['nullable'],
-            'category_id' => ['required'],
-            'support_id' => ['required'],
+            'category_id' => ['nullable'],
+            'support_id' => ['nullable'],
             'title' => ['nullable', 'string'],
             'title_en' => ['nullable', 'string'],
             'summary' => ['nullable', 'string'],
             'price' => ['nullable'],
             'price_en' => ['nullable'],
         ]);
-        $banks = $bankRepo->getFindById($request->bank_data_id);
         $productId = $this->productRepo->getFindId($product);
-        $category = $categoryRepo->getById($request->category_id);
-        $support = $supportRepo->getMultiId($request->support_id);
+        $support = $supportRepo->getMultiId($request->support_id) ?? null;
+        $banks = $bankRepo->getFindById($request->bank_data_id) ?? null;
+        $category = $categoryRepo->getById($request->category_id) ?? null;
         $this->productRepo->update_one($request, $productId);
-        $productId->supports()->detach();
-        $productId->supports()->sync($support);
-        $productId->categories()->detach();
-        $productId->categories()->attach($category);
-
-        $productId->banks()->detach();
-        $productId->banks()->sync($banks);
+        if (!empty($support)) {
+            $productId->supports()->detach();
+            $productId->supports()->sync($support);
+        }
+        if (!is_null($category)) {
+            $productId->categories()->detach();
+            $productId->categories()->attach($category);
+        }
+        if (!empty($banks)) {
+            $productId->banks()->detach();
+            $productId->banks()->sync($banks);
+        }
+        if (is_null($category)) {
+                $productId->categories()->detach();
+        }
+        if (empty($banks)) {
+            $productId->banks()->detach();
+        }
         return response()->json(['id' => $productId->id], 200);
     }
 
@@ -152,7 +170,7 @@ class ProductController extends Controller
                     $existingImages = Product::query()->where(function ($query) use ($relativePathImages) {
                         foreach ($relativePathImages as $path) {
 //                            dd($query->where('multi_image', 'LIKE', '%' . $path . '%')->get());
-                          $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
+                            $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
                         }
                     })->first();
 //                    dd($relativePathImages , $existingImages);
@@ -382,11 +400,11 @@ class ProductController extends Controller
         if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
 
         if ($status == "1") {
-            $this->productRepo->isDefault($id , 1);
+            $this->productRepo->isDefault($id, 1);
             return response()->json(["status" => "success", 'message' => "success change status enable in default"], 200);
         } else {
             if ($status == "0") {
-                $this->productRepo->isDefault($id , 0 );
+                $this->productRepo->isDefault($id, 0);
                 return response()->json(["status" => "success", 'message' => "success change status disable in default"], 200);
             } else {
                 return response()->json(["status" => "failed", 'message' => "failed"], 405);

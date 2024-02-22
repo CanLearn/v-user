@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Panel\Category;
 use App\Models\Panel\Product;
 use Faker\Factory as Faker;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,9 +16,9 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create();
-
-        for ($i = 1; $i <= 1000; $i++) {
-            Product::query()->create([
+        $category = Category::query()->findOrFail(7);
+        for ($i = 1; $i <= 20 ; $i++) {
+            $products =   Product::query()->create([
                 'title'=> $faker->sentence,
                 'is_default' => 1,
                 'title_en'=> $faker->sentence,
@@ -36,6 +37,13 @@ class ProductSeeder extends Seeder
                 'status_price' => 'disable',
                 'user_id' => 1,
             ]);
+            Product::chunk(10, function ($products) use ($category) {
+                foreach ($products as $product) {
+
+                    $product->categories()->syncWithoutDetaching($category->id);
+                }
+            });
         }
+
     }
 }

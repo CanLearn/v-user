@@ -29,7 +29,7 @@ class categoryRepo
 
     public function getById($id)
     {
-        return Category::query()->findOrFail($id);
+        return Category::query()->where('id', $id)->first();
     }
 
     public function update($value, $id)

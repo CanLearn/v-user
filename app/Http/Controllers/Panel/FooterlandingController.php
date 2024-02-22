@@ -22,8 +22,8 @@ class FooterlandingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'address' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string'],
+            'address' => ['required', 'string'],
+            'phone' => ['required', 'string'],
             'number_whatsapp' => ['nullable', 'string'],
             'telegram' => ['nullable', 'string'],
             'yahoo' => ['nullable', 'string'],
@@ -52,8 +52,8 @@ class FooterlandingController extends Controller
     {
         if( $request->isMethod('post' && 'PUT')) {
             $request->validate([
-                'address' => ['nullable', 'string'],
-                'phone' => ['nullable', 'string'],
+                'address' => ['required', 'string'],
+                'phone' => ['required', 'string'],
                 'number_whatsapp' => ['nullable', 'string'],
                 'telegram' => ['nullable', 'string'],
                 'yahoo' => ['nullable', 'string'],
