@@ -197,7 +197,6 @@ class LandingController extends Controller
 
         return $products;
     }
-
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
 //        $products = $categoryRepo->getFindSlug($slug)
