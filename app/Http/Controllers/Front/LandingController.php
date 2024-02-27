@@ -170,24 +170,9 @@ class LandingController extends Controller
 
     public function category_product_main_en($slug, categoryRepo $categoryRepo)
     {
-//        $products = $categoryRepo->getFindSlug($slug)
-//            ->products()
-//            ->where('is_default', 0)
-//            ->select([
-//                'title_en',
-//                'slug_en',
-//                'summary_en',
-//                'content_en',
-//                'price_en',
-//                'multi_image_en',
-//                'video_url_en',
-//            ])
-//            ->get();
-//        return $products;
-
         $category = $categoryRepo->getFindSlug($slug);
         $products = $category->load(['products' => function ($q) {
-            $q->where('is_default', 1)->select([
+            $q->where('is_default', 0)->select([
                 'title_en',
                 'slug_en',
                 'summary_en',
@@ -197,7 +182,7 @@ class LandingController extends Controller
                 'video_url_en',
             ])->get();
         }, 'child.products' => function ($q) {
-            $q->where('is_default', 1)->select([
+            $q->where('is_default', 0)->select([
                 'title_en',
                 'slug_en',
                 'summary_en',
@@ -207,6 +192,8 @@ class LandingController extends Controller
                 'video_url_en',
             ])->get();
         }]);
+        // $category->makeHidden(['parent_id', 'user_id' , 'created_at']);
+
 
         return $products;
     }

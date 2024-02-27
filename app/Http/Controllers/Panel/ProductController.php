@@ -144,7 +144,7 @@ class ProductController extends Controller
             $productId->banks()->sync($banks);
         }
         if (is_null($category)) {
-                $productId->categories()->detach();
+            $productId->categories()->detach();
         }
         if (empty($banks)) {
             $productId->banks()->detach();
@@ -159,8 +159,7 @@ class ProductController extends Controller
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) {
-            {
+        if (!is_null($request->oldImages)) { {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_FA');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -169,11 +168,11 @@ class ProductController extends Controller
                 if (!empty($relativePathImages)) {
                     $existingImages = Product::query()->where(function ($query) use ($relativePathImages) {
                         foreach ($relativePathImages as $path) {
-//                            dd($query->where('multi_image', 'LIKE', '%' . $path . '%')->get());
+                            //                            dd($query->where('multi_image', 'LIKE', '%' . $path . '%')->get());
                             $query->orWhere('multi_image', 'LIKE', '%' . $path . '%');
                         }
                     })->first();
-//                    dd($relativePathImages , $existingImages);
+                    //                    dd($relativePathImages , $existingImages);
 
                     $existingImages->update([
                         'multi_image' => $relativePathImages,
@@ -186,8 +185,7 @@ class ProductController extends Controller
             ]);
         }
 
-        if (!is_null($request->oldVideos)) {
-            {
+        if (!is_null($request->oldVideos)) { {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_FA');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -235,7 +233,7 @@ class ProductController extends Controller
         $video_url = $video_url ?? null;
 
 
-//        dd($multi_image, $video_url, $existingImages, $relativePathVideo);
+        //        dd($multi_image, $video_url, $existingImages, $relativePathVideo);
         $this->productRepo->update_two($request, $product, $multi_image, $video_url, $existingImages, $existingVideos);
         return response()->json(['id' => $product->id], 200);
     }
@@ -247,8 +245,7 @@ class ProductController extends Controller
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) {
-            {
+        if (!is_null($request->oldImages)) { {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_EN');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -274,8 +271,7 @@ class ProductController extends Controller
                 'multi_image_en' => null
             ]);
         }
-        if (!is_null($request->oldVideos)) {
-            {
+        if (!is_null($request->oldVideos)) { {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_EN');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -394,20 +390,48 @@ class ProductController extends Controller
         }
     }
 
+    // public function is_default($id, $status)
+    // {
+    //     $products = $this->productRepo->getFindProducts($id);
+    //     if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
+
+    //     if ($status == "1") {
+    //         $this->productRepo->isDefault($id, 1);
+    //         return response()->json(["status" => "success", 'message' => "success change status enable in default"], 200);
+    //     } else {
+    //         if ($status == "0") {
+    //             $this->productRepo->isDefault($id, 0);
+    //             return response()->json(["status" => "success", 'message' => "success change status disable in default"], 200);
+    //         } else {
+    //             return response()->json(["status" => "failed", 'message' => "failed"], 405);
+    //         }
+    //     }
+    // }
+
+
+
     public function is_default($id, $status)
     {
-        $products = $this->productRepo->getFindProducts($id);
-        if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
+        $product = $this->productRepo->getFindProducts($id);
+        if (is_null($product))
+            return response()->json(['message' => 'چنین محصولی وجود ندارد.', 'status' => 'error'], 404);
 
-        if ($status == "1") {
-            $this->productRepo->isDefault($id, 1);
-            return response()->json(["status" => "success", 'message' => "success change status enable in default"], 200);
-        } else {
-            if ($status == "0") {
-                $this->productRepo->isDefault($id, 0);
-                return response()->json(["status" => "success", 'message' => "success change status disable in default"], 200);
-            } else {
-                return response()->json(["status" => "failed", 'message' => "failed"], 405);
+        $categories = $product->categories;
+        foreach ($categories as $category) {
+            $currentDefaultProduct = $category->products()->where('is_default', 1)->first();
+            if ($status == "1") {
+                if ($currentDefaultProduct && $currentDefaultProduct->id != $id) {
+                    $currentDefaultProduct->is_default = 0;
+                    $currentDefaultProduct->save();
+                }
+                $this->productRepo->isDefault($id, 1);
+                return response()->json(["status" => "success", 'message' => "تغییر وضعیت به محصول پیش‌فرض فعال با موفقیت انجام شد."], 200);
+            } elseif ($status == "0") {
+                if ($product->is_default == 1) {
+                    return response()->json(["status" => "failed", 'message' => "این محصول از پیش به عنوان محصول پیش‌فرض تنظیم شده است."], 405);
+                } else {
+                    return response()->json(["status" => "failed", 'message' => "این محصول از پیش به عنوان محصول پیش‌فرض تنظیم نشده است."], 405);
+                }
             }
         }
     }

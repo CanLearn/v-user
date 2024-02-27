@@ -21,6 +21,12 @@ class Category extends Model
         'user_id',
     ];
 
+    protected $hidden = [
+        'user_id',
+        'parent_id',
+        'created_at',
+        'pivot'
+    ];
     public function sluggable(): array
     {
         return [

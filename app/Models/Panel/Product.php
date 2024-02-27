@@ -36,6 +36,7 @@ class Product extends Model
          'multi_image_en' ,
          'multi_image' ,
          'video_url' ,
+         'pivot'
 //         'video_url_en' ,
         //  'status_price' ,
      ];
