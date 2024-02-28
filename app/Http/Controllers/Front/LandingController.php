@@ -208,7 +208,6 @@ class LandingController extends Controller
         }]);
         // $category->makeHidden(['parent_id', 'user_id' , 'created_at']);
 
-
         return $products;
     }
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
