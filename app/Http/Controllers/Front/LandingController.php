@@ -61,6 +61,7 @@ class LandingController extends Controller
         $products = $category->load(['products' => function ($q) {
             $q->where('is_default', 1)
                 ->select([
+                    'id',
                     'title',
                     'slug',
                     'summary',
@@ -68,17 +69,15 @@ class LandingController extends Controller
                     'price',
                     'multi_image',
                     'video_url',
-                ])
-                ->first();
+                ])->with('supports');
         }]);
         foreach ($products->products as $product) {
-
             foreach ($product->supports as $q) {
                 $support =  $q->select(['link' , 'title'])->get();
             }
         }
 
-        return [$products , $support];
+        return $products ;
     }
 
     public function bank_data_product_en($slug, bankRepo $bankRepo)
@@ -212,21 +211,6 @@ class LandingController extends Controller
     }
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
-        //        $products = $categoryRepo->getFindSlug($slug)
-        //            ->products()
-        //            ->where('is_default', 0)
-        //            ->select([
-        //                'title',
-        //                'slug',
-        //                'summary',
-        //                'content',
-        //                'price',
-        //                'multi_image',
-        //                'video_url',
-        //            ])
-        //            ->get();
-
-
         $category = $categoryRepo->getFindSlug($slug);
         $products = $category->load(['products' => function ($q) {
             $q->where('is_default', 1)->select([
