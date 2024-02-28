@@ -20,7 +20,9 @@ class Videolanding extends Model
         'slug_en',
         'video_en',
         'content_en',
-        'user_id'
+        'user_id',
+        'duration',
+        'duration_en',
     ];
 
     public function sluggable(): array
@@ -49,4 +51,3 @@ class Videolanding extends Model
         return asset('files/video/en/' . $this->video_en);
     }
 }
-

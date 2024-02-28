@@ -260,11 +260,9 @@ class ProductController extends Controller
                     $existingImages->update([
                         'multi_image_en' => $relativePathImages,
                     ]);
-                    // foreach ($existingImages as $image) {
-                    //     dd($image);
-                    //     $image->delete();
-                    // }
+
                 }
+
             }
         } else {
             $product->update([

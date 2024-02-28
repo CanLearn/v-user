@@ -13,7 +13,7 @@ class videoRepo
         return Videolanding::query()->paginate();
     }
 
-    public function store($data, $video, $video_en)
+    public function store($data, $video, $video_en , $duration , $duration_en )
     {
         return Videolanding::query()->create([
             'title' => $data['title'],
@@ -24,6 +24,8 @@ class videoRepo
             'slug_en' => Str::slug($data['title_en']),
             'video_en' => $video_en,
             'content_en' => $data['content_en'],
+            'duration' => $duration ,
+            'duration_en' => $duration_en ,
             'user_id' => auth()->user()->id
         ]);
     }

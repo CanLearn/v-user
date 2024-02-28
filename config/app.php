@@ -164,7 +164,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class
+        App\Providers\TelescopeServiceProvider::class,
+        ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider::class
     ])->toArray(),
 
     /*
@@ -179,6 +180,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'FFMpeg' => ProtoneMedia\LaravelFFMpeg\Support\FFMpeg::class
+
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

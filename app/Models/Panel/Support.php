@@ -19,13 +19,18 @@ class Support extends Model
         'user_id'
     ];
 
+    protected $hidden = [
+       'created_at',
+       'pivot',
+       'updated_at',
+       'user_id'
+     ];
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'support_products')
-            ->withPivot('support_id', 'product_id');
+        return $this->belongsToMany(Product::class, 'support_products');
     }
 }

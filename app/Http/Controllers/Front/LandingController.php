@@ -10,6 +10,7 @@ use App\Repository\images\imageRepo;
 use App\Repository\main\mainRepo;
 use App\Repository\Video\videoRepo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LandingController extends Controller
 {
@@ -35,6 +36,7 @@ class LandingController extends Controller
         $products = $category->load(['products' => function ($q) {
             $q->where('is_default', 1)
                 ->select([
+                    'id',
                     'title_en',
                     'slug_en',
                     'summary_en',
@@ -42,10 +44,15 @@ class LandingController extends Controller
                     'price_en',
                     'multi_image_en',
                     'video_url_en',
-                ])
-                ->first();
+                ])->with('supports');
         }]);
-        return $products;
+        foreach ($products->products as $product) {
+            foreach ($product->supports as $q) {
+                $support =  $q->select(['link' , 'title'])->get();
+            }
+        }
+
+        return $products ;
     }
 
     public function category_product_fa($slug, categoryRepo $categoryRepo)
@@ -64,7 +71,14 @@ class LandingController extends Controller
                 ])
                 ->first();
         }]);
-        return $products;
+        foreach ($products->products as $product) {
+
+            foreach ($product->supports as $q) {
+                $support =  $q->select(['link' , 'title'])->get();
+            }
+        }
+
+        return [$products , $support];
     }
 
     public function bank_data_product_en($slug, bankRepo $bankRepo)
@@ -199,19 +213,19 @@ class LandingController extends Controller
     }
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
-//        $products = $categoryRepo->getFindSlug($slug)
-//            ->products()
-//            ->where('is_default', 0)
-//            ->select([
-//                'title',
-//                'slug',
-//                'summary',
-//                'content',
-//                'price',
-//                'multi_image',
-//                'video_url',
-//            ])
-//            ->get();
+        //        $products = $categoryRepo->getFindSlug($slug)
+        //            ->products()
+        //            ->where('is_default', 0)
+        //            ->select([
+        //                'title',
+        //                'slug',
+        //                'summary',
+        //                'content',
+        //                'price',
+        //                'multi_image',
+        //                'video_url',
+        //            ])
+        //            ->get();
 
 
         $category = $categoryRepo->getFindSlug($slug);

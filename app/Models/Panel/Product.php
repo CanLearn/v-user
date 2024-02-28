@@ -33,10 +33,10 @@ class Product extends Model
         'user_id' ,
     ];
      protected $hidden = [
-         'multi_image_en' ,
-         'multi_image' ,
-         'video_url' ,
-         'pivot'
+        //  'multi_image_en' ,
+        //  'multi_image' ,
+        //  'video_url' ,
+        //  'pivot'
 //         'video_url_en' ,
         //  'status_price' ,
      ];
@@ -63,6 +63,7 @@ class Product extends Model
         self::STATUS_PRICE_ANSIBLE
     ];
     protected $appends = [ 'multi_image_fa' , 'image_en' , 'video_fa' , 'video_en' ];
+
 
     public function categories()
     {
