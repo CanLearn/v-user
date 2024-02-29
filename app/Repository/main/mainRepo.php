@@ -69,7 +69,8 @@ class mainRepo
             'sub_title',
             'title',
             'content',
-            'image'
+            'image',
+            ''
         ])->first();
     }
 }

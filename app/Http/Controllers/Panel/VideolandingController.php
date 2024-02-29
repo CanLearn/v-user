@@ -38,8 +38,8 @@ class VideolandingController extends Controller
         $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
 
         $duration = $this->getVideoDuration($video);
-        dd($duration);
-        $duration_en = $this->getVideoDurationEn($request->file('video_en'));
+
+        $duration_en = $this->getVideoDurationEn($video_en);
 
         $this->videoRepo->store($request->only('title', 'content', 'title_en', 'content_en',), $video, $video_en, $duration, $duration_en);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);

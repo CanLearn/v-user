@@ -67,6 +67,7 @@ class videoRepo
             'slug_en',
             'video_en',
             'content_en',
+            'duration_en'
         ])->get();
     }
 
@@ -77,6 +78,8 @@ class videoRepo
             'slug',
             'video',
             'content',
+            'duration'
+
         ])->get();
     }
 }
