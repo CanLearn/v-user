@@ -127,6 +127,7 @@ class ProductController extends Controller
             'price_en' => ['nullable'],
         ]);
         $productId = $this->productRepo->getFindId($product);
+
         $support = $supportRepo->getMultiId($request->support_id) ?? null;
         $banks = $bankRepo->getFindById($request->bank_data_id) ?? null;
         $category = $categoryRepo->getById($request->category_id) ?? null;
@@ -138,6 +139,18 @@ class ProductController extends Controller
         if (!is_null($category)) {
             $productId->categories()->detach();
             $productId->categories()->attach($category);
+            if ($productId['is_default'] == 1) {
+                $categories = $productId->categories;
+                foreach ($categories as $category) {
+                    $currentDefaultProduct = $category->products()->where('is_default', 1)->first();
+                    if ($currentDefaultProduct && $currentDefaultProduct->id    ) {
+                        $currentDefaultProduct->is_default = 0;
+                        $currentDefaultProduct->save();
+                    }
+                    dd($currentDefaultProduct);
+                    $is = $this->productRepo->isDefault($productId->id, 1);
+                }
+            }
         }
         if (!empty($banks)) {
             $productId->banks()->detach();
@@ -152,14 +165,13 @@ class ProductController extends Controller
         return response()->json(['id' => $productId->id], 200);
     }
 
-
     public function update_two(Request $request, $product, categoryRepo $categoryRepo, supportRepo $supportRepo)
     {
-
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) { {
+        if (!is_null($request->oldImages)) {
+            {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_FA');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -185,7 +197,8 @@ class ProductController extends Controller
             ]);
         }
 
-        if (!is_null($request->oldVideos)) { {
+        if (!is_null($request->oldVideos)) {
+            {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_FA');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -238,14 +251,14 @@ class ProductController extends Controller
         return response()->json(['id' => $product->id], 200);
     }
 
-
     public function update_three(Request $request, $product)
     {
 
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) { {
+        if (!is_null($request->oldImages)) {
+            {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_EN');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -269,7 +282,8 @@ class ProductController extends Controller
                 'multi_image_en' => null
             ]);
         }
-        if (!is_null($request->oldVideos)) { {
+        if (!is_null($request->oldVideos)) {
+            {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_EN');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -324,7 +338,6 @@ class ProductController extends Controller
 
         return response()->json(['id' => $product->id], 200);
     }
-
 
     public function destroy($product)
     {
@@ -388,32 +401,11 @@ class ProductController extends Controller
         }
     }
 
-    // public function is_default($id, $status)
-    // {
-    //     $products = $this->productRepo->getFindProducts($id);
-    //     if (is_null($products)) return response()->json(['message' => 'همچین پرداکتی وجود ندارد ', 'status' => 'error'], 401);
-
-    //     if ($status == "1") {
-    //         $this->productRepo->isDefault($id, 1);
-    //         return response()->json(["status" => "success", 'message' => "success change status enable in default"], 200);
-    //     } else {
-    //         if ($status == "0") {
-    //             $this->productRepo->isDefault($id, 0);
-    //             return response()->json(["status" => "success", 'message' => "success change status disable in default"], 200);
-    //         } else {
-    //             return response()->json(["status" => "failed", 'message' => "failed"], 405);
-    //         }
-    //     }
-    // }
-
-
-
     public function is_default($id, $status)
     {
         $product = $this->productRepo->getFindProducts($id);
         if (is_null($product))
             return response()->json(['message' => 'چنین محصولی وجود ندارد.', 'status' => 'error'], 404);
-
         $categories = $product->categories;
         foreach ($categories as $category) {
             $currentDefaultProduct = $category->products()->where('is_default', 1)->first();
