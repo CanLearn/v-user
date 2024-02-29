@@ -205,15 +205,15 @@ class LandingController extends Controller
                 'video_url_en',
             ])->get();
         }]);
-        // $category->makeHidden(['parent_id', 'user_id' , 'created_at']);
 
         return $products;
     }
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
+    
         $category = $categoryRepo->getFindSlug($slug);
         $products = $category->load(['products' => function ($q) {
-            $q->where('is_default', 1)->select([
+            $q->where('is_default', 0)->select([
                 'title',
                 'slug',
                 'summary',
@@ -221,10 +221,9 @@ class LandingController extends Controller
                 'price',
                 'multi_image',
                 'video_url',
-            ])
-                ->get();
+            ])->get();
         }, 'child.products' => function ($q) {
-            $q->where('is_default', 1)->select([
+            $q->where('is_default', 0)->select([
                 'title',
                 'slug',
                 'summary',
@@ -232,8 +231,7 @@ class LandingController extends Controller
                 'price',
                 'multi_image',
                 'video_url',
-            ])
-                ->get();
+            ])->get();
         }]);
 
         return $products;

@@ -35,7 +35,7 @@ class videoRepo
         return Videolanding::query()->findOrFail($is);
     }
 
-    public function update($data, $id, $video, $video_en)
+    public function update($data, $id, $video, $video_en , $duration , $duration_en)
     {
         return Videolanding::query()->where('id', $id->id)->update([
             'title' => $data['title'] ?? $id->title,
@@ -46,6 +46,8 @@ class videoRepo
             'slug_en' => Str::slug($data['title_en'] ?? $id->title_en),
             'video_en' => $video_en ?? $id->video_en,
             'content_en' => $data['content_en'] ?? $id->content_en,
+            'duration' => $duration ,
+            'duration_en' => $duration_en ,
             'user_id' => auth()->user()->id
         ]);
     }

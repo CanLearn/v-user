@@ -44,8 +44,6 @@ class VideolandingController extends Controller
         $this->videoRepo->store($request->only('title', 'content', 'title_en', 'content_en',), $video, $video_en, $duration, $duration_en);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);
     }
-
-
     public function show($videolanding)
     {
         return $videolanding = $this->videoRepo->getFindId($videolanding);
@@ -61,11 +59,14 @@ class VideolandingController extends Controller
             'content' => ['nullable', 'string'],
 
         ]);
+
         $video = $request->video ? File::video_landing($request->file('video')) : null;
         $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
         $videolanding = $this->videoRepo->getFindId($videolanding);
-
-        $this->videoRepo->update($request->only('title', 'content', 'title_en', 'content_en'), $videolanding, $video, $video_en);
+        $duration = $this->getVideoDuration($video);
+        $duration_en = $this->getVideoDurationEn($video_en);
+        $this->videoRepo->update($request->only('title', 'content', 'title_en', 'content_en')
+            , $videolanding, $video, $video_en , $duration , $duration_en);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);
     }
     public function destroy($videolanding)
