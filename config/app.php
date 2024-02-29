@@ -165,7 +165,8 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-        ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider::class
+        ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider::class,
+        Owenoj\LaravelGetId3\GetId3ServiceProvider::class,
     ])->toArray(),
 
     /*

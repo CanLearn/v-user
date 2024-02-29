@@ -7,6 +7,7 @@ use App\Repository\Video\mainRepo;
 use App\Repository\Video\videoRepo;
 use App\Services\File;
 use FFMpeg\FFProbe;
+use getID3;
 use Illuminate\Http\Request;
 
 class VideolandingController extends Controller
@@ -32,12 +33,13 @@ class VideolandingController extends Controller
             'content' => ['nullable', 'string'],
 
         ]);
-        $duration = $this->getVideoDuration($request->file('video'));
-        $duration_en = $this->getVideoDurationEn($request->file('video_en'));
 
         $video = $request->video ? File::video_landing($request->file('video')) : null;
         $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
 
+        $duration = $this->getVideoDuration($video);
+        dd($duration);
+        $duration_en = $this->getVideoDurationEn($request->file('video_en'));
 
         $this->videoRepo->store($request->only('title', 'content', 'title_en', 'content_en',), $video, $video_en, $duration, $duration_en);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);
@@ -48,8 +50,6 @@ class VideolandingController extends Controller
     {
         return $videolanding = $this->videoRepo->getFindId($videolanding);
     }
-
-
     public function update(Request $request, $videolanding)
     {
         $request->validate([
@@ -61,50 +61,29 @@ class VideolandingController extends Controller
             'content' => ['nullable', 'string'],
 
         ]);
-        $videolanding = $this->videoRepo->getFindId($videolanding);
         $video = $request->video ? File::video_landing($request->file('video')) : null;
         $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
+        $videolanding = $this->videoRepo->getFindId($videolanding);
+
         $this->videoRepo->update($request->only('title', 'content', 'title_en', 'content_en'), $videolanding, $video, $video_en);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);
     }
-
-
     public function destroy($videolanding)
     {
         $this->videoRepo->delete($videolanding);
         return response()->json(['message' => "success video ", 'status' => 'success'], 200);
     }
-
     public function getVideoDuration($video)
     {
-        $ffprobe = FFProbe::create([
-            'ffmpeg.binaries' => '/path/to/ffmpeg', // Path to ffmpeg binary
-            'ffprobe.binaries' => '/path/to/ffprobe', // Path to ffprobe binary
-        ]);
-        dd($ffprobe);
-        // $duration = $ffmpeg->open($video->getPathname())
-        //     ->getStreams()
-        //     ->first()
-        //     ->get('duration');
-        // dd($duration);
-        // // تبدیل مدت زمان به ساعت و دقیقه
-        // $hours = floor($duration / 3600);
-        // $minutes = floor(($duration / 60) % 60);
-        // return ['hours' => $hours, 'minutes' => $minutes];
+        $getID3 = new getID3;
+        $file = $getID3->analyze('files/video/' . $video);
+        return $file['playtime_seconds'];
     }
 
-    // public function getVideoDurationEn($video)
-    // {
-    //     $ffmpeg = FFMpeg::create();
-
-    //     $duration = $ffmpeg->open($video->getPathname())
-    //         ->getStreams()
-    //         ->first()
-    //         ->get('duration');
-
-    //     // تبدیل مدت زمان به ساعت و دقیقه
-    //     $hours = floor($duration / 3600);
-    //     $minutes = floor(($duration / 60) % 60);
-    //     return ['hours' => $hours, 'minutes' => $minutes];
-    // }
+    public function getVideoDurationEn($video)
+    {
+        $getID3 = new getID3;
+        $file = $getID3->analyze('files/video/en/' . $video);
+        return $file['playtime_seconds'];
+    }
 }
