@@ -105,6 +105,11 @@ class ProductController extends Controller
     public function show($product)
     {
         return $product = $this->productRepo->findSupportId($product);
+        // dd($product);
+        // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
+        // if( is_null($product) )  return response()->json(['message' => 'همچین پرداکتی وجود ندارد '  , 'status' => 'error'] , 401);
+
+        // return $this->productRepo->findSupportId($product) ;
     }
 
 
@@ -255,7 +260,9 @@ class ProductController extends Controller
                     $existingImages->update([
                         'multi_image_en' => $relativePathImages,
                     ]);
+
                 }
+
             }
         } else {
             $product->update([
@@ -407,30 +414,9 @@ class ProductController extends Controller
         if (is_null($product))
             return response()->json(['message' => 'چنین محصولی وجود ندارد.', 'status' => 'error'], 404);
 
-        if ($product->categories) {
-            $categories = $product->categories;
-            foreach ($categories as $category) {
-                $currentDefaultProduct = $category->products()->where('is_default', 1)->first();
-                if ($status == "1") {
-                    if ($currentDefaultProduct && $currentDefaultProduct->id != $id) {
-                        $currentDefaultProduct->is_default = 0;
-                        $currentDefaultProduct->save();
-                    }
-                    $this->productRepo->isDefault($id, 1);
-                    return response()->json(["status" => "success", 'message' => "تغییر وضعیت به محصول پیش‌فرض فعال با موفقیت انجام شد."], 200);
-                } elseif ($status == "0") {
-                    if ($product->is_default == 1) {
-                        return response()->json(["status" => "failed", 'message' => "این محصول از پیش به عنوان محصول پیش‌فرض تنظیم شده است."], 405);
-                    } else {
-                        return response()->json(["status" => "failed", 'message' => "این محصول از پیش به عنوان محصول پیش‌فرض تنظیم نشده است."], 405);
-                    }
-                }
-            }
-        }
-
-        $bankies = $product->banks;
-        foreach ($bankies as $bank) {
-            $currentDefaultProduct = $bank->products()->where('is_default', 1)->first();
+        $categories = $product->categories;
+        foreach ($categories as $category) {
+            $currentDefaultProduct = $category->products()->where('is_default', 1)->first();
             if ($status == "1") {
                 if ($currentDefaultProduct && $currentDefaultProduct->id != $id) {
                     $currentDefaultProduct->is_default = 0;
