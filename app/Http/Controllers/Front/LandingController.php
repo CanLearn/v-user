@@ -42,17 +42,18 @@ class LandingController extends Controller
                     'summary_en',
                     'content_en',
                     'price_en',
+                    'status_price',
                     'multi_image_en',
                     'video_url_en',
                 ])->with('supports');
         }]);
         foreach ($products->products as $product) {
             foreach ($product->supports as $q) {
-                $support =  $q->select(['link' , 'title'])->get();
+                $support =  $q->select(['link', 'title'])->get();
             }
         }
 
-        return $products ;
+        return $products;
     }
 
     public function category_product_fa($slug, categoryRepo $categoryRepo)
@@ -64,6 +65,7 @@ class LandingController extends Controller
                     'id',
                     'title',
                     'slug',
+                    'status_price',
                     'summary',
                     'content',
                     'price',
@@ -73,11 +75,11 @@ class LandingController extends Controller
         }]);
         foreach ($products->products as $product) {
             foreach ($product->supports as $q) {
-                $support =  $q->select(['link' , 'title'])->get();
+                $support =  $q->select(['link', 'title'])->get();
             }
         }
 
-        return $products ;
+        return $products;
     }
 
     public function bank_data_product_en($slug, bankRepo $bankRepo)
@@ -92,6 +94,7 @@ class LandingController extends Controller
                     'content_en',
                     'price_en',
                     'multi_image_en',
+                     'status_price',
                     'video_url_en',
                 ])
                 ->first();
@@ -109,6 +112,7 @@ class LandingController extends Controller
                     'slug',
                     'summary',
                     'content',
+                     'status_price',
                     'price',
                     'multi_image',
                     'video_url',
@@ -192,6 +196,7 @@ class LandingController extends Controller
                 'content_en',
                 'price_en',
                 'multi_image_en',
+                'status_price',
                 'video_url_en',
             ])->get();
         }, 'child.products' => function ($q) {
@@ -200,6 +205,7 @@ class LandingController extends Controller
                 'slug_en',
                 'summary_en',
                 'content_en',
+                'status_price',
                 'price_en',
                 'multi_image_en',
                 'video_url_en',
@@ -210,7 +216,7 @@ class LandingController extends Controller
     }
     public function category_product_main_fa($slug, categoryRepo $categoryRepo)
     {
-    
+
         $category = $categoryRepo->getFindSlug($slug);
         $products = $category->load(['products' => function ($q) {
             $q->where('is_default', 0)->select([
@@ -219,6 +225,7 @@ class LandingController extends Controller
                 'summary',
                 'content',
                 'price',
+                'status_price',
                 'multi_image',
                 'video_url',
             ])->get();
@@ -228,6 +235,7 @@ class LandingController extends Controller
                 'slug',
                 'summary',
                 'content',
+                'status_price',
                 'price',
                 'multi_image',
                 'video_url',
@@ -239,38 +247,61 @@ class LandingController extends Controller
 
     public function bank_data_product_main_fa($slug, bankRepo $bankRepo)
     {
-        $products = $bankRepo->getFindSlug($slug)
-            ->products()
-            ->where('is_default', 0)
-            ->select([
+        $data = $bankRepo->getFindSlug($slug);
+        $products = $data->load(['products' => function ($q) {
+            $q->where('is_default', 0)->select([
                 'title',
                 'slug',
                 'summary',
                 'content',
                 'price',
+                'status_price',
                 'multi_image',
                 'video_url',
-            ])
-            ->get();
+            ])->get();
+        }, 'child.products' => function ($q) {
+            $q->where('is_default', 0)->select([
+                'title',
+                'slug',
+                'summary',
+                'content',
+                'status_price',
+                'price',
+                'multi_image',
+                'video_url',
+            ])->get();
+        }]);
 
         return $products;
     }
 
     public function bank_data_product_main_en($slug, bankRepo $bankRepo)
     {
-        $products = $bankRepo->getFindSlug($slug)
-            ->products()
-            ->where('is_default', 0)
-            ->select([
-                'title_en',
+        $data = $bankRepo->getFindSlug($slug);
+        $products = $data->load(['products' => function ($q) {
+            $q->where('is_default', 0)->select([
+               'title_en',
                 'slug_en',
                 'summary_en',
                 'content_en',
                 'price_en',
+                'status_price',
                 'multi_image_en',
                 'video_url_en',
-            ])
-            ->get();
+            ])->get();
+        }, 'child.products' => function ($q) {
+            $q->where('is_default', 0)->select([
+             'title_en',
+                'slug_en',
+                'summary_en',
+                'content_en',
+                'price_en',
+                'status_price',
+                'multi_image_en',
+                'video_url_en',
+            ])->get();
+        }]);
+
         return $products;
     }
 }

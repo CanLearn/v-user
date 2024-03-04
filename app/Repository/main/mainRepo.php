@@ -70,7 +70,6 @@ class mainRepo
             'title',
             'content',
             'image',
-            ''
         ])->first();
     }
 }

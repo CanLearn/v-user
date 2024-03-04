@@ -19,7 +19,9 @@ class productRepo
 
     public function index()
     {
-        return $this->query->with(['categories' => function ($query) {
+        return $this->query->with([ 'banks' => function($query) {
+            $query->select('title');
+        }  ,  'categories' => function ($query) {
             $query->select('title');
         }])
             ->orderByDesc('created_at')
