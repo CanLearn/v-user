@@ -9,6 +9,10 @@ use App\Services\File;
 use FFMpeg\FFProbe;
 use getID3;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class VideolandingController extends Controller
 {
@@ -22,27 +26,57 @@ class VideolandingController extends Controller
         return $video = $this->videoRepo->index();
     }
 
+//    public function store(Request $request)
+//    {
+//        $request->validate([
+//            'video' => ['nullable', 'mimes:mp4,mov,ogg,qt'],
+//            'video_en' => ['nullable',  'mimes:mp4,mov,ogg,qt'],
+//            'title' => ['nullable', 'string'],
+//            'title_en' => ['nullable', 'string'],
+//            'content_en' => ['nullable', 'string'],
+//            'content' => ['nullable', 'string'],
+//
+//        ]);
+//
+//        $video = $request->video ? File::video_landing($request->file('video')) : null;
+//        $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
+//
+//        $duration = $this->getVideoDuration($video);
+//
+//        $duration_en = $this->getVideoDurationEn($video_en);
+//
+//        $this->videoRepo->store($request->only('title', 'content', 'title_en', 'content_en',), $video, $video_en, $duration, $duration_en);
+//        return response()->json(['message' => "success video ", 'status' => 'success'], 200);
+//    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'video' => ['nullable', 'mimes:mp4,mov,ogg,qt'],
-            'video_en' => ['nullable',  'mimes:mp4,mov,ogg,qt'],
-            'title' => ['nullable', 'string'],
-            'title_en' => ['nullable', 'string'],
-            'content_en' => ['nullable', 'string'],
-            'content' => ['nullable', 'string'],
+        $receiverVideo = new FileReceiver("video", $request, HandlerFactory::classFromRequest($request));
+        $receiverVideoEn = new FileReceiver("video_en", $request, HandlerFactory::classFromRequest($request));
 
-        ]);
+        if ($receiverVideo->isUploaded() === false) {
+            throw new UploadMissingFileException();
+        }
+        if ($receiverVideo->isUploaded() === false) {
+            throw new UploadMissingFileException();
+        }
+        $fileReceived = $receiverVideo->receive();
+        if($fileReceived->isFinished())
+        {
+            $file = $fileReceived->getFile();
+            $extension = $file->getClientOriginalExtension();
+            $fileName = str_replace('.' . $extension , '' ,$file->getClientOriginalName());
+            $fileName = '_' . md5(time()) . '.' . $extension;
+            $disk = Storage::disk(config('filesystems.default'));
+            $path = $disk->putFileAs('video' , $file , $fileName);
+            unlink($file->getPathname());
 
-        $video = $request->video ? File::video_landing($request->file('video')) : null;
-        $video_en = $request->video_en ? File::video_en_landing($request->file('video_en')) : null;
+            $handler = $fileReceived->handler();
+            return [
+                'done' => $handler->getPercentageDone()
+            ];
+        }
 
-        $duration = $this->getVideoDuration($video);
-
-        $duration_en = $this->getVideoDurationEn($video_en);
-
-        $this->videoRepo->store($request->only('title', 'content', 'title_en', 'content_en',), $video, $video_en, $duration, $duration_en);
-        return response()->json(['message' => "success video ", 'status' => 'success'], 200);
     }
     public function show($videolanding)
     {

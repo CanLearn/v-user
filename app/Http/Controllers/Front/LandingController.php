@@ -154,7 +154,6 @@ class LandingController extends Controller
     {
         return $main = $mainRepo->getFindPersaon();
     }
-
     public function videoEn(videoRepo $videoRepo)
     {
         return $video = $videoRepo->getFindEn();

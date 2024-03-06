@@ -10,3 +10,4 @@
 
 </body>
 </html>
+sudo apt-get install php8.1-gd

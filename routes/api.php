@@ -97,3 +97,5 @@ Route::name('front.')->group(function() {
     Route::get('/bank-data-product/fa/{slug}', [LandingController::class, 'bank_data_product_fa'])->name('bank-data-product-fa');
 });
 
+
+Route::apiResource('tests' , \App\Http\Controllers\TestController::class);
