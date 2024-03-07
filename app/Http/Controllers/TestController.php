@@ -6,6 +6,10 @@ use App\Models\Test;
 use App\Http\Requests\StoreTestRequest;
 use App\Http\Requests\UpdateTestRequest;
 use App\Services\File;
+use Illuminate\Support\Facades\Storage;
+use Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class TestController extends Controller
 {
@@ -19,10 +23,25 @@ class TestController extends Controller
 
     public function store(StoreTestRequest $request)
     {
-        $video = $request->video ? File::video_landing($request->file('video')) : null;
-        $test = new Test();
-        $test->video = $video;
-        $test->save();
+        $receiverVideo = new FileReceiver("video", $request, HandlerFactory::classFromRequest($request));
+        if ($receiverVideo->isUploaded() === false) {
+            throw new UploadMissingFileException();
+        }
+        $fileReceived = $receiverVideo->receive();
+        if($fileReceived->isFinished())
+        {
+            $file = $fileReceived->getFile();
+            $extension = $file->getClientOriginalExtension();
+            $fileName = str_replace('.' . $extension , '' ,$file->getClientOriginalName());
+            $fileName = '_' . md5(time()) . '.' . $extension;
+            $disk = Storage::disk(config('filesystems.default'));
+            $path = $disk->putFileAs('video' , $file , $fileName);
+            unlink($file->getPathname());
+            $handler = $fileReceived->handler();
+            return [
+                'done' => $handler->getPercentageDone()
+            ];
+        }
         return response()->json(['ok'], 200);
     }
 

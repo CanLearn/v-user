@@ -21,6 +21,7 @@ return [
             'root' => public_path(),
             'url' => env('APP_URL').'/',
             'visibility' => 'public',
+            'size_limit' => 1024 * 1024 * 1000
         ],
         'public_image_products_en' => [
             'driver' => 'local',

@@ -25,5 +25,7 @@
 
     php_value upload_max_filesize 3G
 
+    php_value upload_max_filesize 100M
+    100M php_value post_max_size 100M
 
 </IfModule>

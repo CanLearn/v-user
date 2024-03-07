@@ -9,6 +9,7 @@ use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\ProfileController;
 use App\Http\Controllers\Panel\SupportController;
+use App\Http\Middleware\CheckFileSizeMiddleware;
 use App\Models\Panel\BankData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
