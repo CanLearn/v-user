@@ -68,7 +68,6 @@ class videoRepo
             'video',
             'content',
             'duration'
-
         ])->get();
     }
     public function update_one($data, $id)
