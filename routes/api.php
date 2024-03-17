@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login');
@@ -26,7 +25,6 @@ Route::prefix('auth')->name('auth.')->group(function () {
         ->post('confirmation-password', [RegisteredUserController::class, 'updatedPassword'])
         ->name('confirmation-password');
 });
-
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('databanks', BankDataController::class);
@@ -79,7 +77,8 @@ Route::name('front.')->group(function() {
     Route::get('/bank-data-product/en/{slug}', [LandingController::class, 'bank_data_product_en'])->name('bank-data-product-en');
     Route::get('/bank-data-product/fa/{slug}', [LandingController::class, 'bank_data_product_fa'])->name('bank-data-product-fa');
 });
-Route::put('products/store_four/{product}', [ProductController::class, 'store_four'])->name('products.store_four');
+Route::put('products/store_four/{product}/', [ProductController::class, 'store_four'])->name('products.store_four');
+//Route::put('products/store_four/{product}/as/{uuid}', [ProductController::class, 'store_four'])->name('products.store_four');
 Route::put('products/store_five/{product}', [ProductController::class, 'store_five'])->name('products.store_five');
 
 Route::resource('video-landing', \App\Http\Controllers\Panel\VideolandingController::class)->except('store');
@@ -90,3 +89,4 @@ Route::put('update-one/{video}', [\App\Http\Controllers\Panel\VideolandingContro
 Route::put('update-two/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_two'])->name('update-two');
 Route::put('update-three/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_three'])->name('update-three');
 Route::apiResource('tests' , \App\Http\Controllers\TestController::class);
+Route::get('product/uuid' , [ProductController::class , 'uuid'])->name('uuid');

@@ -12,6 +12,7 @@ use App\Repository\products\productRepo;
 use App\Repository\supportRepo\supportRepo;
 use App\Services\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -89,15 +90,27 @@ class ProductController extends Controller
         return response()->json(['id' => $product->id], 200);
     }
 
+//    public function store_four(Request $request, $product , $uuid)
     public function store_four(Request $request, $product)
     {
         $request->validate([
             'video_url' => ['nullable'],
         ]);
-        $product = $this->productRepo->getFindId($product);
+        $cache = Cache::get('code' . $request->header('uuid'));
+        $product = $this->productRepo->getFindProducts($product);
+        $me = $product->whereNotNull('video_url')->first();
+        if (! is_array($cache)) {
+            $this->productRepo->create_four($product, $video_url);
+        }
         $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
-        $this->productRepo->create_four($product, $video_url);
         return response()->json(['id' => $product->id], 200);
+    }
+
+    public function uuid()
+    {
+        $code = Str::uuid();
+        Cache::put('code' . $code, $code, now()->addMinutes(30));
+        return $code;
     }
 
     public function store_five(Request $request, $product)
@@ -168,7 +181,8 @@ class ProductController extends Controller
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) { {
+        if (!is_null($request->oldImages)) {
+            {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_FA');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -194,7 +208,8 @@ class ProductController extends Controller
             ]);
         }
 
-        if (!is_null($request->oldVideos)) { {
+        if (!is_null($request->oldVideos)) {
+            {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_FA');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -254,7 +269,8 @@ class ProductController extends Controller
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
-        if (!is_null($request->oldImages)) { {
+        if (!is_null($request->oldImages)) {
+            {
                 $oldImages = $request->oldImages;
                 $basePath = env('IMAGE_EN');
                 $relativePathImages = array_map(function ($image) use ($basePath) {
@@ -278,7 +294,8 @@ class ProductController extends Controller
                 'multi_image_en' => null
             ]);
         }
-        if (!is_null($request->oldVideos)) { {
+        if (!is_null($request->oldVideos)) {
+            {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_EN');
                 $relativePathVideo = array_map(function ($image) use ($basePath) {
@@ -416,7 +433,6 @@ class ProductController extends Controller
     // }
 
 
-
     public function is_default($id, $status)
     {
         $product = $this->productRepo->getFindProducts($id);
@@ -442,4 +458,6 @@ class ProductController extends Controller
             }
         }
     }
+
+
 }
