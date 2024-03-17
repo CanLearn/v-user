@@ -30,12 +30,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware('auth:sanctum')->prefix('panel')->name('panel')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('databanks', BankDataController::class);
-
-    Route::resource('video-landing', \App\Http\Controllers\Panel\VideolandingController::class);
     Route::resource('image-landing', \App\Http\Controllers\Panel\ImagelandingController::class);
     Route::resource('main-landing', \App\Http\Controllers\Panel\MainlandingController::class);
     Route::resource('footer-landing', \App\Http\Controllers\Panel\FooterlandingController::class);
-
     Route::resource('supports', SupportController::class);
     Route::resource('products', ProductController::class)->except(['store']);
     Route::post('products/store_one', [ProductController::class, 'store_one'])->name('products.store_one');
@@ -98,5 +95,11 @@ Route::name('front.')->group(function() {
     Route::get('/bank-data-product/fa/{slug}', [LandingController::class, 'bank_data_product_fa'])->name('bank-data-product-fa');
 });
 
-
+Route::resource('video-landing', \App\Http\Controllers\Panel\VideolandingController::class)->except('store');
+Route::post('store-one', [\App\Http\Controllers\Panel\VideolandingController::class , 'store_one'])->name('store-one');
+Route::post('store-two/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'store_two'])->name('store-two');
+Route::post('store-three/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'store_three'])->name('store-three');
+Route::put('update-one/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_one'])->name('update-one');
+Route::put('update-two/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_two'])->name('update-two');
+Route::put('update-three/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_three'])->name('update-three');
 Route::apiResource('tests' , \App\Http\Controllers\TestController::class);
