@@ -59,10 +59,15 @@ class productRepo
         ]);
     }
 
-    public function create_four($product, $multi_image, $multi_image_en)
+    public function create_four($product, $multi_image)
     {
         return $this->query->where('id', $product->id)->update([
             'video_url' => $multi_image,
+        ]);
+    }
+    public function create_five($product , $multi_image_en)
+    {
+        return $this->query->where('id', $product->id)->update([
             'video_url_en' => $multi_image_en,
         ]);
     }

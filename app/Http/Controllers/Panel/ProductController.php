@@ -93,12 +93,21 @@ class ProductController extends Controller
     {
         $request->validate([
             'video_url' => ['nullable'],
-            'video_url_en' => ['nullable'],
         ]);
         $product = $this->productRepo->getFindId($product);
         $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
+        $this->productRepo->create_four($product, $video_url);
+        return response()->json(['id' => $product->id], 200);
+    }
+
+    public function store_five(Request $request, $product)
+    {
+        $request->validate([
+            'video_url_en' => ['nullable'],
+        ]);
+        $product = $this->productRepo->getFindId($product);
         $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
-        $this->productRepo->create_four($product, $video_url, $video_url_en);
+        $this->productRepo->create_five($product, $video_url_en);
         return response()->json(['id' => $product->id], 200);
     }
 
