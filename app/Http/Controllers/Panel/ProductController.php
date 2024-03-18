@@ -328,7 +328,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
-        }   else{
+        }  else{
             Video::query()->where('videotable_id', $product->id)->delete();
         }
 
