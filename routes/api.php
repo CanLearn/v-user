@@ -90,3 +90,6 @@ Route::put('update-two/{video}', [\App\Http\Controllers\Panel\VideolandingContro
 Route::put('update-three/{video}', [\App\Http\Controllers\Panel\VideolandingController::class , 'update_three'])->name('update-three');
 Route::apiResource('tests' , \App\Http\Controllers\TestController::class);
 Route::get('product/uuid' , [ProductController::class , 'uuid'])->name('uuid');
+
+Route::post('products/test/', [ProductController::class, 'test'])->name('products.test');
+

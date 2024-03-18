@@ -136,7 +136,7 @@ class productRepo
         ]);
     }
 
-    public function update_two($value, $product, $multi_image, $video_url, $oldImage, $oldVideo)
+    public function update_two($value, $product, $multi_image, $oldImage)
     {
         $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
         $oldImageJson = !empty($oldImage->multi_image) ? json_encode($oldImage->multi_image) : null;
@@ -150,23 +150,11 @@ class productRepo
         } elseif (!empty($multi_image) && empty($oldImageJson)) {
             $mergedImagesArray = $multi_image;
         }
-
-        $newVideoJson = !empty($video_url) ? json_encode($video_url) : null;
-        $oldVideoJson = !empty($oldVideo->video_url) ? json_encode($oldVideo->video_url) : null;
-        $mergedVideoArray = null;
-        if (!empty($video_url) && !empty($oldVideoJson)) {
-            $mergedVideoArray = array_merge(json_decode($oldVideoJson, true), $video_url);
-        } elseif (empty($video_url) && !empty($oldVideoJson)) {
-            $mergedVideoArray = json_decode($oldVideoJson, true);
-        } elseif (!empty($video_url) && empty($oldVideoJson)) {
-            $mergedVideoArray = $video_url;
-        }
         $mergedImages = !empty($mergedImagesArray) ? json_encode($mergedImagesArray) : null;
         $mergedVideo = !empty($mergedVideoArray) ? json_encode($mergedVideoArray) : null;
         return $this->query->where('id', $product->id)->update([
             'content' => $value->content,
             'multi_image' => $mergedImages,
-            'video_url' => $mergedVideo,
         ]);
     }
 
