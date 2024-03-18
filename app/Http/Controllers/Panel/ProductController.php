@@ -274,7 +274,6 @@ class ProductController extends Controller
 //                $video->save();
 //            }
 //        }
-
         $this->productRepo->update_two($request, $product, $multi_image, $existingImages);
         return response()->json(['id' => $product->id], 200);
     }
