@@ -10,6 +10,7 @@ class Video extends Model
 {
     use HasFactory;
     protected $fillable = [ 'videotable_type' , 'videotable_id' , 'url' , 'url_en'];
+
     public function videotable()
     {
         return $this->morphTo();
