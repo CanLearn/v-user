@@ -242,45 +242,31 @@ class ProductController extends Controller
             {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_FA');
-                $relativePathVideo = array_map(function ($image) use ($basePath) {
-                    return str_replace($basePath, '', $image);
-                }, $oldVideo);
-                if (!empty($relativePathVideo)) {
-                    $existingVideos = Video::query()->where(function ($query) use ($relativePathVideo, $product) {
-                        foreach ($relativePathVideo as $path) {
-                            $query->orWhere('videotable_id', $product->id)->orWhere('url', 'LIKE', '%' . $path . '%');
-                        }
-                    })->first();
-                    if ($existingVideos) {
-                        $existingVideos->update([
-                            'url' => $relativePathVideo,
-                        ]);
+                $existingVideos = Video::whereHas('videotable', function ($query) {
+                    $query->whereNotNull('id');
+                })->where(function ($query) use ($oldVideo, $basePath) {
+                    foreach ($oldVideo as $videoPath) {
+                        $videoPath = str_replace($basePath, '', $videoPath);
+                        $query->orWhere('url', 'LIKE', '%' . $videoPath . '%');
                     }
-                }
-
+                })->get();
+                dd($existingVideos);
+                Video::whereNotIn('id', $existingVideos->pluck('id')->toArray())->delete();
             }
-
+        }  else{
+            $cutOffTime = now()->subMinutes(1);
+            Video::query()
+                ->where('videotable_id', $product->id)
+                ->whereNotNull('url')
+                ->where('created_at', '<', $cutOffTime)
+                ->delete();
         }
-        else{
-            Video::query()->where('videotable_id', $product->id)->delete();
-        }
-//        if ($request->hasFile('video_url')) {
-//            $video_url = $request->video_url ? File::video_peo($request->file('video_url')) : null;
-//            foreach ($video_url as $path) {
-//                $video = new Video();
-//                $video->url = $path;
-//                $video->videotable_id = $product->id;
-//                $video->videotable_type = get_class($product);
-//                $video->save();
-//            }
-//        }
         $this->productRepo->update_two($request, $product, $multi_image, $existingImages);
         return response()->json(['id' => $product->id], 200);
     }
 
     public function update_three(Request $request, $product)
     {
-
         $existingImages = null;
         $existingVideos = null;
         $product = $this->productRepo->getFindId($product);
@@ -313,22 +299,27 @@ class ProductController extends Controller
             {
                 $oldVideo = $request->oldVideos;
                 $basePath = env('FILE_EN');
-                $relativePathVideo = array_map(function ($image) use ($basePath) {
-                    return str_replace($basePath, '', $image);
-                }, $oldVideo);
-                if (!empty($relativePathVideo)) {
-                    $existingVideos = Product::query()->where(function ($query) use ($relativePathVideo) {
-                        foreach ($relativePathVideo as $path) {
-                            $query->orWhere('video_url_en', 'LIKE', '%' . $path . '%');
-                        }
-                    })->first();
-                    $existingVideos->update([
-                        'video_url_en' => $relativePathVideo,
-                    ]);
-                }
+
+
+
+                $existingVideos = Video::whereHas('videotable', function ($query) {
+                    $query->whereNotNull('id'); // فقط ویدیوهایی که به مدل‌های دیگر متصل هستند را در نظر بگیرید
+                })->where(function ($query) use ($oldVideo, $basePath) {
+                    foreach ($oldVideo as $videoPath) {
+                        $videoPath = str_replace($basePath, '', $videoPath);
+                        $query->orWhere('url_en', 'LIKE', '%' . $videoPath . '%');
+                    }
+                })->get();
+
+                Video::whereNotIn('id', $existingVideos->pluck('id')->toArray())->delete();
             }
         }  else{
-            Video::query()->where('videotable_id', $product->id)->delete();
+            $cutOffTime = now()->subMinutes(1);
+            Video::query()
+                ->where('videotable_id', $product->id)
+                ->whereNotNull('url_en')
+                ->where('created_at', '<', $cutOffTime)
+                ->delete();
         }
 
 
@@ -345,18 +336,6 @@ class ProductController extends Controller
         }
 
         $multi_image_en = $multi_image_en ?? null;
-
-
-//        if ($request->hasFile('video_url_en')) {
-//            $video_url_en = $request->video_url_en ? File::video_peo_en($request->file('video_url_en')) : null;
-//            foreach ($video_url_en as $path) {
-//                $video = new Video();
-//                $video->url_en = $path;
-//                $video->videotable_id = $product->id;
-//                $video->videotable_type = get_class($product);
-//                $video->save();
-//            }
-//        }
 
 
         $this->productRepo->update_three($request, $product, $multi_image_en, $existingImages);
@@ -565,3 +544,17 @@ class ProductController extends Controller
 //    $this->productRepo->update_two($request, $product, $multi_image, $video_url, $existingImages, $existingVideos);
 //    return response()->json(['id' => $product->id], 200);
 //}
+
+
+//multi
+//                $relativePathVideo = array_map(function ($image) use ($basePath) {
+//                    return str_replace($basePath, '', $image);
+//                }, $oldVideo);
+//
+//                if (!empty($relativePathVideo)) {
+//                    $existingVideos = Video::query()->where(function ($query) use ($relativePathVideo) {
+//                        foreach ($relativePathVideo as $path) {
+//                            $query->orWhere('url_en', 'LIKE' , '%' . $path . '%');
+//                        }
+//                    })->get();
+//                }

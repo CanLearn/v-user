@@ -158,7 +158,7 @@ class productRepo
         ]);
     }
 
-    public function update_three($value, $product, $multi_image, $video_url, $oldImage, $oldVideo)
+    public function update_three($value, $product, $multi_image, $oldImage)
     {
         // dd( $multi_image  , $video_url, $oldImage, $oldVideo);
         $newImageJson = !empty($multi_image) ? json_encode($multi_image) : null;
@@ -171,23 +171,25 @@ class productRepo
         } elseif (!empty($multi_image) && empty($oldImageJson)) {
             $mergedImagesArray = $multi_image;
         }
-        $oldVideoJson = !empty($oldVideo->video_url_en) ? json_encode($oldVideo->video_url_en) : null;
-        $mergedVideoArray = null;
+//        $oldVideoJson = !empty($oldVideo->video_url_en) ? json_encode($oldVideo->video_url_en) : null;
+//        $mergedVideoArray = null;
+//
+//        if (!empty($video_url) && !empty($oldVideoJson)) {
+//            $mergedVideoArray = array_merge(json_decode($oldVideoJson, true), $video_url);
+//        } elseif (empty($video_url) && !empty($oldVideoJson)) {
+//            $mergedVideoArray = json_decode($oldVideoJson, true);
+//        } elseif (!empty($video_url) && empty($oldVideoJson)) {
+//            $mergedVideoArray = $video_url;
+//        }
+//        $mergedVideos =  !empty($mergedVideoArray) ? json_encode($mergedVideoArray) : null;
 
-        if (!empty($video_url) && !empty($oldVideoJson)) {
-            $mergedVideoArray = array_merge(json_decode($oldVideoJson, true), $video_url);
-        } elseif (empty($video_url) && !empty($oldVideoJson)) {
-            $mergedVideoArray = json_decode($oldVideoJson, true);
-        } elseif (!empty($video_url) && empty($oldVideoJson)) {
-            $mergedVideoArray = $video_url;
-        }
+
         $mergedImages = !empty($mergedImagesArray) ? json_encode($mergedImagesArray) : null;
-        $mergedVideos =  !empty($mergedVideoArray) ? json_encode($mergedVideoArray) : null;
 
         return $this->query->where('id', $product->id)->update([
             'content_en' => $value->content_en,
             'multi_image_en' => $mergedImages,
-            'video_url_en' => $mergedVideos,
+//            'video_url_en' => $mergedVideos,
         ]);
     }
 
