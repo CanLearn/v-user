@@ -72,8 +72,6 @@ Route::name('front.')->group(function() {
 
     Route::get('/category-product/en/{slug}', [LandingController::class, 'category_product_en'])->name('category-product-en');
     Route::get('/category-product/fa/{slug}', [LandingController::class, 'category_product_fa'])->name('category-product-fa');
-
-
     Route::get('/bank-data-product/en/{slug}', [LandingController::class, 'bank_data_product_en'])->name('bank-data-product-en');
     Route::get('/bank-data-product/fa/{slug}', [LandingController::class, 'bank_data_product_fa'])->name('bank-data-product-fa');
 });
