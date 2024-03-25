@@ -19,6 +19,9 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request, userRepo $repo)
     {
         $users = $repo->getname($request->name);
+            if(is_null($users)){
+                return response()->json(['message' => 'not found user'], 404);
+            }
         if ($users && Hash::check($request->password , $users->password)) {
             $token = $users->createToken($users->name)->plainTextToken;
             return response()->json(['token' => $token, 'user' => $users]);
