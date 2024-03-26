@@ -18,7 +18,7 @@ ENTRYPOINT [ "docker/entrypoint.sh" ]
 
 # ==============================================================================
 #  node
-FROM node:20-alpine as node
+FROM node:14-alpine as node
 
 WORKDIR /var/www
 COPY . .
