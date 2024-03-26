@@ -28,4 +28,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENV PORT=8000
 
 # Set entry point
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
