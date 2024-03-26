@@ -19,7 +19,7 @@ COPY . .
 COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
 # Copy entrypoint script
-COPY docker/entrypoint.sh /usr/local/bin/
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Set executable permission on entrypoint script
 RUN chmod +x /usr/local/bin/entrypoint.sh
