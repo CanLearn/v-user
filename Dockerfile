@@ -1,5 +1,5 @@
 # Use the PHP 8.1 base image
-FROM php:latest as php
+FROM php:8.1 as php
 
 # Install dependencies
 RUN apt-get update -y \
@@ -18,14 +18,32 @@ COPY . .
 # Copy composer binary
 COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
-# Copy entrypoint script
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Set executable permission on entrypoint script
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 # Set environment variables
 ENV PORT=8000
 
 # Set entry point
-ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT [ "docker/entrypoint.sh" ]
+
+# ==============================================================================
+# Node.js stage
+FROM node:14-alpine as node
+
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Build your application
+RUN npm run build
+
+# Expose the port
+EXPOSE 3000
+
+# Command to run the application
+CMD ["npm", "start"]
