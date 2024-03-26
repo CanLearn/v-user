@@ -25,12 +25,7 @@ RUN apt-get update -y \
     && docker-php-ext-install pdo pdo_mysql bcmath \
     && pecl install -o -f redis \
     && rm -rf /tmp/pear \
-    && docker-php-ext-enable redis && apt install nodejs -y \
-                                        && sudo apt install npm -y \
-                                        && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh \
-                                        && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
-                                        && source ~/.bashrc \
-                                        && nvm install v14.10.0
+    && docker-php-ext-enable redis
 
 # Set entry point
 ENTRYPOINT ["bash", "/usr/local/bin/entrypoint.sh"]
