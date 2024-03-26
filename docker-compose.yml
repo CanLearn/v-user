@@ -1,3 +1,4 @@
+
 version: "3.8"
 services:
 
@@ -19,6 +20,7 @@ services:
         depends_on:
             - database
             - redis
+
     # Database Server
     database:
         image: mysql:8.0
@@ -39,6 +41,19 @@ services:
         ports:
             - 6379:6379
 
+    # Queue Server
+    queue:
+        build:
+            context: .
+            target: php
+            args:
+                - APP_ENV=${APP_ENV}
+        environment:
+            - APP_ENV=${APP_ENV}
+            - CONTAINER_ROLE=queue
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
 
     # Node Server
     node:
