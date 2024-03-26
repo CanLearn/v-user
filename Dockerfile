@@ -7,7 +7,6 @@ COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENV PORT=8000
-ENV ENVP=./.env
 
 RUN apt-get update -y \
     && apt-get install -y unzip libpq-dev libcurl4-gnutls-dev \
