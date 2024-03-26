@@ -1,28 +1,31 @@
-#!/bin/bash
+# Use the PHP 8.1 base image
+FROM php:latest as php
 
-if [ ! -f "vendor/autoload.php" ]; then
-    composer install --no-progress --no-interaction
-fi
+# Install dependencies
+RUN apt-get update -y \
+    && apt-get install -y unzip libpq-dev libcurl4-gnutls-dev \
+    && docker-php-ext-install pdo pdo_mysql bcmath \
+    && pecl install -o -f redis \
+    && rm -rf /tmp/pear \
+    && docker-php-ext-enable redis
 
-if [ ! -f ".env" ]; then
-    echo "Creating env file for env $APP_ENV"
-    cp .env.example .env
-else
-    echo "env file exists."
-fi
+# Set working directory
+WORKDIR /var/www
 
-role=${CONTAINER_ROLE:-app}
+# Copy application files
+COPY . .
 
-if [ "$role" = "app" ]; then
-    php artisan migrate
-    php artisan key:generate
-    php artisan cache:clear
-    php artisan config:clear
-    php artisan route:clear
-    php artisan serve --port=$PORT --host=0.0.0.0 --env=.env
-    exec docker-php-entrypoint "$@"
-elif [ "$role" = "queue" ]; then
-    echo "Running the queue ... "
-    php /var/www/artisan queue:work --verbose --tries=3 --timeout=180
+# Copy composer binary
+COPY --from=composer:2.3.5 /usr/bin/composer /usr/bin/composer
 
-fi
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/
+
+# Set executable permission on entrypoint script
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set environment variables
+ENV PORT=8000
+
+# Set entry point
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
